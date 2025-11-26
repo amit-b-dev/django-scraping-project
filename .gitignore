@@ -1,0 +1,39 @@
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Django Stuff
+*.sqlite3
+db.sqlite3
+media/
+staticfiles/
+static/
+*.log
+
+# VS Code
+.vscode/
+
+# Environment Variables
+.env
+*.env
+
+
+# Python
+# *.pyc
+# # __pycache__/
+# *.pyo
+# *.pyd
+# *.pdb
+# *.so
+
+# Backup & Zip Files
+*.zip
+*.tar
+*.tar.gz
+*.rar
+
+# OS Files
+.DS_Store
+Thumbs.db

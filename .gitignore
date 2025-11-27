@@ -28,6 +28,7 @@ static/
 # *.pdb
 # *.so
 
+aimleap.py
 # Backup & Zip Files
 *.zip
 *.tar

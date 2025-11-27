@@ -120,7 +120,7 @@ class Vahan:
         except:
             traceback.print_exc()
     
-    def download_pdf(self,r,tree,h,pdf_no,t_no):
+    def download_pdf(self,app_token_pdf,tree,h,pdf_no,t_no):
         try:
             pdf_dir = "pdf_folder"
             os.makedirs(pdf_dir, exist_ok=True)
@@ -131,15 +131,12 @@ class Vahan:
             a_tag = tds[2].xpath(".//a[contains(@onclick, 'displayPdf')]")[pdf_no]
             onclick = a_tag.xpath("./@onclick")[0]
             params = re.findall(r"'(.*?)'", onclick)
-            j = r.json()
-            app_token_pdf = j.get("app_token")
 
             normal_v   = params[0]
             case_val   = params[1]
             court_code = params[2]
             filename   = params[3]
             appFlag    = params[4]
-            app_token  = app_token_pdf
 
             payload = {
                 "normal_v": normal_v,
@@ -148,7 +145,7 @@ class Vahan:
                 "filename": filename,
                 "appFlag": appFlag,
                 "ajax_req": "true",
-                "app_token": app_token
+                "app_token": app_token_pdf
             }
             headers = {
                 "User-Agent": "Mozilla/5.0",
@@ -158,60 +155,81 @@ class Vahan:
             }
 
             pdf_url = "https://services.ecourts.gov.in/ecourtindia_v6/home/display_pdf"
+            time.sleep(1)
             pdf_response = self.session.post(pdf_url, data=payload, headers=headers)
             res_pdf = json.loads(pdf_response.text)
             full_pdf_url = self.BASE+res_pdf['order']
-            pdf_name = str(h)+'_'+full_pdf_url.split('/')[-1]
-            pdf_path = os.path.join(pdf_dir,pdf_name)
-            time.sleep(0.5)
-            img = self.session.get(full_pdf_url, headers=self.headers).content
-            with open(pdf_path, "wb") as f:
-                f.write(img)
-            print("pdf downloaded successfully")
+            print('full_pdf_url=',full_pdf_url)
+            # pdf_name = str(h)+'_'+full_pdf_url.split('/')[-1]
+            # pdf_path = os.path.join(pdf_dir,pdf_name)
+            # time.sleep(0.5)
+            # img = self.session.get(full_pdf_url, headers=self.headers).content
+            # with open(pdf_path, "wb") as f:
+            #     f.write(img)
+            # print("pdf downloaded successfully")
             
             j = pdf_response.json()
             app_token_pdf = j.get("app_token")
-            return app_token_pdf
+            return app_token_pdf,full_pdf_url
         except:
             traceback.print_exc()
             print("pdf issue")
 
     def get_case_history_status(self,r,tree,Order_Date,Court_Number,app_token1,srno):
-        
-        a_tag = tree.xpath("//a[@class='fw-bold text-underline text-success fst-italic']")
-        parts=re.search(r"display_case_acknowlegement\('([^']+)'", a_tag[0].xpath("./@onclick")[0]).group(1).split('&')
-        result = {"path": parts[0], **{p.split("=",1)[0]: p.split("=",1)[1] for p in parts[1:]}}
+        try:
+            a_tag = tree.xpath("//a[@class='fw-bold text-underline text-success fst-italic']")
+            parts=re.search(r"display_case_acknowlegement\('([^']+)'", a_tag[0].xpath("./@onclick")[0]).group(1).split('&')
+            result = {"path": parts[0], **{p.split("=",1)[0]: p.split("=",1)[1] for p in parts[1:]}}
 
-        url = "https://services.ecourts.gov.in/ecourtindia_v6/home/viewBusiness"
-        payload = {
-            "court_code": result['court_code'],
-            "state_code": result['state_code'],
-            "dist_code": result['state_code'],
-            "nextdate1": "",
-            "case_number1": result['cino'],
-            "disposal_flag": "Disposed",
-            "businessDate": Order_Date,
-            "national_court_code": result['national_court_code'],
-            "court_no": Court_Number,
-            "search_by": "cnr",
-            "srno": srno,
-            "ajax_req": "true",
-            "app_token": app_token1
-        }
+            url = "https://services.ecourts.gov.in/ecourtindia_v6/home/viewBusiness"
+            payload = {
+                "court_code": result['court_code'],
+                "state_code": result['state_code'],
+                "dist_code": result['dist_code'],
+                "nextdate1": "",
+                "case_number1": result['cino'],
+                "disposal_flag": "Disposed",
+                "businessDate": Order_Date,
+                "national_court_code": result['national_court_code'],
+                "court_no": Court_Number,
+                "search_by": "cnr",
+                "srno": srno,
+                "ajax_req": "true",
+                "app_token": app_token1
+            }
 
-        headers = {
-            "X-Requested-With": "XMLHttpRequest",
-            "User-Agent": "Mozilla/5.0",
-            "Referer": "https://services.ecourts.gov.in/",
-            "Origin": "https://services.ecourts.gov.in",
-            "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"
-        }
+            headers = {
+                "X-Requested-With": "XMLHttpRequest",
+                "User-Agent": "Mozilla/5.0",
+                "Referer": "https://services.ecourts.gov.in/",
+                "Origin": "https://services.ecourts.gov.in",
+                "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"
+            }
+            time.sleep(1)
+            r = self.session.post(url, data=payload, headers=headers)
+            j = r.json()
+            app_token = j.get("app_token")
 
-        # MUST use valid session cookies
+            res = json.loads(r.text)
+            html_data = res["data_list"]
+            tree = html.fromstring(html_data)
 
-        r = self.session.post(url, data=payload, headers=headers)
+            data = {}
+            data["in_the_court_of"] = tree.xpath("//b[text()='In the court of ']/parent::span")[0].text_content().split(':')[1].strip()
+            data["court_name"] = tree.xpath("//b[text()=' CNR Number ']/parent::span")[0].text_content().split(':')[1].strip()
+            data["Case_Number"] = tree.xpath("//b[text()='Case Number ']/parent::span")[0].text_content().split(':')[1].strip()
+            data["party1"] = tree.xpath("//b[text()='  versus  ']/parent::span")[0].text_content().split('versus')[0].strip()
+            data["party2"] = tree.xpath("//b[text()='  versus  ']/parent::span")[0].text_content().split('versus')[1].strip()
+            data['date'] = Order_Date
+            
+            data["Business"] = tree.xpath("//b[text()='Business']/parent::td/parent::tr/td[3]")[0].text_content().strip()
+            data["Nature of Disposal"] = tree.xpath("//b[text()='Nature of Disposal']/parent::td/parent::tr/td[3]")[0].text_content().strip()
+            data["Disposal Date"] = tree.xpath("//b[text()='Disposal Date']/parent::td/parent::tr/td[3]")[0].text_content().strip()
 
-        print(r.text)
+            print(r.text)
+            return app_token,data
+        except:
+            traceback.print_exc()
 
     def search_cnr(self, cnr_no):
         try:
@@ -228,6 +246,8 @@ class Vahan:
             
             r = self.session.post(url, data=form, headers=self.headers)        
             print("Search status:", r.status_code)
+            j = r.json()
+            app_token = j.get("app_token")
 
             res = json.loads(r.text)
             html_data = res["casetype_list"]
@@ -248,8 +268,8 @@ class Vahan:
             Decision_Date = tree.xpath("//td[contains(normalize-space(),'Decision Date')]/following-sibling::td[1]")[0].text_content().strip()
             Case_Status  = tree.xpath("//td[contains(normalize-space(),'Case Status')]/following-sibling::td[1]")[0].text_content().strip()
             Nature_of_Disposal = tree.xpath("//td[contains(normalize-space(),'Nature of Disposal')]/following-sibling::td[1]")[0].text_content().strip()
-            Judge = tree.xpath("//td[contains(normalize-space(),'Court Number and Judge')]/following-sibling::td[1]")[0].text_content().strip().split('-')[0]
-            Court_Number = tree.xpath("//td[contains(normalize-space(),'Court Number and Judge')]/following-sibling::td[1]")[0].text_content().strip().split('-')[1]
+            Court_Number = tree.xpath("//td[contains(normalize-space(),'Court Number and Judge')]/following-sibling::td[1]")[0].text_content().strip().split('-')[0]
+            judge = tree.xpath("//td[contains(normalize-space(),'Court Number and Judge')]/following-sibling::td[1]")[0].text_content().strip().split('-')[1]
             party_and_advocate = tree.xpath("//table[@class='table table-bordered Petitioner_Advocate_table']//tr/td")[0].text_content().replace("\xa0", " ").strip()
             party_name = party_and_advocate.lower().split('advocate-')[0].split(')')[1].strip()
             advocate_name = party_and_advocate.lower().split('advocate-')[1].strip()
@@ -259,20 +279,24 @@ class Vahan:
             Under_Section = tree.xpath("//table[@id='act_table']//tr/td")[0].text_content().strip()
             
             case_history = []
-            for h in tree.xpath("//table[@class='history_table table ']//tbody/tr"):
-                tds = h.xpath("./td")
+            rows = tree.xpath("//table[@class='history_table table ']//tbody/tr")
+            for h in range(len(rows)):
+                tds = rows[h].xpath("./td")
                 judge = tds[0].text_content().strip()
                 business_on_date = tds[1].text_content().strip()
                 hearing_date = tds[2].text_content().strip()
                 purpose = tds[3].text_content().strip()
 
+                app_token,data = self.get_case_history_status(r,tree,business_on_date,Court_Number,app_token,str(h))
+
                 case_history.append({
                     "judge": judge,
                     "business_on_date": business_on_date,
                     "hearing_date": hearing_date,
-                    "purpose": purpose
+                    "purpose": purpose,
+                    "daily_status":data
                 })
-            
+
             Interim_Orders = []
             tables = tree.xpath("//table[@class='order_table table ']")
             rows = tables[0].xpath(".//tr")
@@ -281,15 +305,16 @@ class Vahan:
                 Order_Number = tds[0].text_content().strip()
                 Order_Date = tds[1].text_content().strip()
                 Order_Details = tds[2].text_content().strip()
+                
+                app_token,full_pdf_url = self.download_pdf(app_token,tree,h,0,t_no=0)
 
                 Interim_Orders.append({
                     "Order_Number": Order_Number,
                     "Order_Date": Order_Date,
-                    "Order_Details": Order_Details
+                    "Order_Details": Order_Details,
+                    "full_pdf_url":full_pdf_url
                 })
-                # app_token1 = self.download_pdf(r,tree,h,0,t_no=0)
-                # srno=str(h-1)                
-                # self.get_case_history_status(r,tree,Order_Date,Court_Number,app_token1,srno)
+
                 
 
 
@@ -302,18 +327,16 @@ class Vahan:
                 Order_Date = tds[1].text_content().strip()
                 Order_Details = tds[2].text_content().strip()
 
+                app_token,full_pdf_url = self.download_pdf(r,tree,h,1,t_no=1)
+
                 Final_Orders_Judgements.append({
                     "Order_Number": Order_Number,
                     "Order_Date": Order_Date,
-                    "Order_Details": Order_Details
+                    "Order_Details": Order_Details,
+                    "pdf_url":full_pdf_url
                 })
 
-                self.download_pdf(r,tree,h,1,t_no=1)
             
-
-            
-            # tree = html.fromstring(html_data)
-
             data = {
                     "Decision_Date": Decision_Date,
                     "Case_Status": Case_Status,

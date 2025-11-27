@@ -320,47 +320,48 @@ class Vahan:
             self.driver.execute_script("arguments[0].scrollIntoView()", print_btn)
             print_btn.click()
 
-            # ---------------- FORM 29 CHECK ----------------
-            # form29_exists = WebDriverWait(self.driver,10).until(EC.presence_of_all_elements_located((By.XPATH, "//span[text()='Print CMV form_29']")))
-            # form29_exists = WebDriverWait(self.driver,10).until(By.XPATH, "//span[text()='Print CMV form_29']")
-
-            # if not form29_exists:
-            #     print("❌ No Form_29 for this vehicle")
-            #     return {"applications": None, "message": "Form_29 is not available"}
+            owner_name = WebDriverWait(self.driver,10).until(EC.presence_of_element_located((By.XPATH,"//label[text()='Owner Name: ']/parent::td/following-sibling::td/span"))).text.strip()
+            chesis_no = self.driver.find_element(By.XPATH,"//label[text()='Chasis No:']/parent::td/following-sibling::td/span").text.strip()
+            application_and_receipt_no = self.driver.find_element(By.XPATH,"//label[text()='Application No./RECEIPT No:']/parent::td/following-sibling::td/span").text.strip()
+            receipt_date = self.driver.find_element(By.XPATH,"//label[text()='Receipt Date:']/parent::td/following-sibling::td/span").text.strip()
+            vehicle_class = self.driver.find_element(By.XPATH,"//label[text()='Vehicle Class:']/parent::td/following-sibling::td/span").text.strip()
+            vehicle_no = self.driver.find_element(By.XPATH,"//label[text()='Vehicle No:']/parent::td/following-sibling::td/span").text.strip()
+            vehicle_registration_date = self.driver.find_element(By.XPATH,"//label[text()='Vehicle Registration Date:']/parent::td/following-sibling::td/span").text.strip()
+            payment_transaction_no = self.driver.find_element(By.XPATH,"//label[text()='Payment Transaction No:']/parent::td/following-sibling::td/span").text.strip()
+            grn_no = self.driver.find_element(By.XPATH,"//label[text()='GRN No:']/parent::td/following-sibling::td/span").text.strip()
+            bank_reference_number = self.driver.find_element(By.XPATH,"//label[text()='Bank Reference Number:']/parent::td/following-sibling::td/span").text.strip()
+            servicing_authority = self.driver.find_element(By.XPATH,"//label[text()='Servicing Authority:']/parent::td/following-sibling::td/span").text.strip()
             
-            try:
-                form29_btn = WebDriverWait(self.driver,2).until(EC.element_to_be_clickable((By.XPATH,"//span[text()='Print CMV form_29']")))
-            except:
-                print("❌ Form_29 not available for this vehicle")
-                return {"applications": None, "message": "Form_29 is not available"}
-        
-            form29_btn = WebDriverWait(self.driver,10).until(
-                EC.element_to_be_clickable((By.XPATH,"//span[text()='Print CMV form_29']"))
-            )
-            self.driver.execute_script("arguments[0].scrollIntoView()", form29_btn)
-            form29_btn.click()
+            headers = self.driver.find_elements(By.XPATH, "//div[@class='ui-datatable-tablewrapper']//thead/tr//span")
+            columns = [h.text.strip() for h in headers]
+            rows = self.driver.find_elements(By.XPATH, "//div[@class='ui-datatable-tablewrapper']//tbody/tr")
+            table_rows = []
+            for row in rows:
+                cols = row.find_elements(By.TAG_NAME, "td")
+                row_data = [col.text.strip() for col in cols]
+                table_rows.append(row_data)
+            fee_details = [dict(zip(columns, row)) for row in table_rows]
 
-            self.driver.switch_to.window(self.driver.window_handles[1])
+            grand_total = self.driver.find_element(By.XPATH,"//span[text()='GRAND TOTAL (in Rs):']/following-sibling::span").text.strip()
+            
+            final_data = {
+                    "owner_name": owner_name,
+                    "chesis_no": chesis_no,
+                    "application_and_receipt_no": application_and_receipt_no,
+                    "receipt_date": receipt_date,
+                    "vehicle_class": vehicle_class,
+                    "vehicle_no": vehicle_no,
+                    "vehicle_registration_date": vehicle_registration_date,
+                    "payment_transaction_no": payment_transaction_no,
+                    "grn_no": grn_no,
+                    "bank_reference_number": bank_reference_number,
+                    "servicing_authority": servicing_authority,
+                    "fees_details":fee_details,
+                    "grand_total":grand_total
 
-            labels = WebDriverWait(self.driver,15).until(
-                EC.presence_of_all_elements_located((By.XPATH,"//div[@class='datatable-panel']//b"))
-            )
-            txt = [el.text.strip() for el in labels]
+                }
 
-            data = {
-                "seller_name": txt[0],
-                "seller_address": txt[1],
-                "sold_date": txt[2] + " " + txt[3] + " " + txt[4],
-                "vehicle_no": txt[5],
-                "maker": txt[6],
-                "chassis_no": txt[7],
-                "engine_no": txt[8],
-                "buyer_name": txt[9],
-                "buyer_father_name": txt[10],
-                "buyer_address": txt[11],
-            }
-
-            return {"applications": data}
+            return {"applications": final_data}
 
         except:
             traceback.print_exc()
@@ -415,13 +416,10 @@ class Vahan:
             self.driver.execute_script("arguments[0].scrollIntoView()", print_btn)
             print_btn.click()
 
-            # ---------------- FORM 29 CHECK ----------------
-            # form29_exists = WebDriverWait(self.driver,10).until(EC.presence_of_all_elements_located((By.XPATH, "//span[text()='Print CMV form_29']")))
-            # form29_exists = WebDriverWait(self.driver,10).until(By.XPATH, "//span[text()='Print CMV form_29']")
+            # owner_name = WebDriverWait(self.driver,20).until(EC.presence_of_element_located((By.XPATH,"//label[text()='Owner Name: ']/parent::td/following-sibling::td/span"))).text.strip()
+            # chesis_no = WebDriverWait(self.driver,20).until(EC.presence_of_element_located((By.XPATH,"//label[text()='Chasis No:']/parent::td/following-sibling::td/span"))).text.strip()
+            # print(owner_name)
 
-            # if not form29_exists:
-            #     print("❌ No Form_29 for this vehicle")
-            #     return {"applications": None, "message": "Form_29 is not available"}
             try:
                 form29_btn = WebDriverWait(self.driver,2).until(EC.element_to_be_clickable((By.XPATH,"//span[text()='Print CMV form_29']")))
             except:

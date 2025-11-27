@@ -1,10 +1,12 @@
+# --- Virtual Environments ---
 env/
 venv/
 ENV/
 env.bak/
 venv.bak/
+.venv/
 
-# Django Stuff
+# --- Django ---
 *.sqlite3
 db.sqlite3
 media/
@@ -12,31 +14,32 @@ staticfiles/
 static/
 *.log
 
+# Optional: Ignore migrations except __init__.py
+# Remove this block if you want to track migrations
+**/migrations/*.py
+!**/migrations/__init__.py
 
-
-# VS Code
-.vscode/
-
-# Environment Variables
+# --- Environment Variables ---
 .env
 *.env
 
+# --- VS Code ---
+.vscode/
 
-# Python
-# *.pyc
-# # __pycache__/
-# *.pyo
-# *.pyd
-# *.pdb
-# *.so
+# --- Python Cache ---
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pdb
+*.so
 
-aimleap.py
-# Backup & Zip Files
+# --- Backup & Archives ---
 *.zip
 *.tar
 *.tar.gz
 *.rar
 
-# OS Files
+# --- OS Files ---
 .DS_Store
 Thumbs.db

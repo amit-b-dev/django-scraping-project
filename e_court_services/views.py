@@ -155,7 +155,7 @@ class Vahan:
             }
 
             pdf_url = "https://services.ecourts.gov.in/ecourtindia_v6/home/display_pdf"
-            time.sleep(1)
+            time.sleep(2)
             pdf_response = self.session.post(pdf_url, data=payload, headers=headers)
             res_pdf = json.loads(pdf_response.text)
             full_pdf_url = self.BASE+res_pdf['order']
@@ -216,7 +216,7 @@ class Vahan:
 
             data = {}
             data["in_the_court_of"] = tree.xpath("//b[text()='In the court of ']/parent::span")[0].text_content().split(':')[1].strip()
-            data["court_name"] = tree.xpath("//b[text()=' CNR Number ']/parent::span")[0].text_content().split(':')[1].strip()
+            data["CNR_Number"] = tree.xpath("//b[text()=' CNR Number ']/parent::span")[0].text_content().split(':')[1].strip()
             data["Case_Number"] = tree.xpath("//b[text()='Case Number ']/parent::span")[0].text_content().split(':')[1].strip()
             data["party1"] = tree.xpath("//b[text()='  versus  ']/parent::span")[0].text_content().split('versus')[0].strip()
             data["party2"] = tree.xpath("//b[text()='  versus  ']/parent::span")[0].text_content().split('versus')[1].strip()
@@ -327,7 +327,7 @@ class Vahan:
                 Order_Date = tds[1].text_content().strip()
                 Order_Details = tds[2].text_content().strip()
 
-                app_token,full_pdf_url = self.download_pdf(r,tree,h,1,t_no=1)
+                app_token,full_pdf_url = self.download_pdf(app_token,tree,h,1,t_no=1)
 
                 Final_Orders_Judgements.append({
                     "Order_Number": Order_Number,

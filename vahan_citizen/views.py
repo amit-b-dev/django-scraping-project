@@ -1,10 +1,4 @@
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from datetime import datetime
-import logging,time
-from .vahan_helper import Vahan
-
-logger = logging.getLogger(__name__)
+from .vahan_helper import *
 
 print("🔥 Starting global Vahan driver...")
 GLOBAL_VAHAN_DRIVER = Vahan().driver

@@ -20,6 +20,7 @@ from pathlib import Path
 
 warnings.simplefilter("ignore")
 warnings.filterwarnings("ignore") 
+logger = logging.getLogger(__name__)
 
 class Vahan:
 

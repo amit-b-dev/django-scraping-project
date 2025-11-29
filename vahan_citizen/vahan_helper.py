@@ -191,6 +191,7 @@ class Vahan:
                         print(" CAPTCHA accepted instantly! ✓")
                         if os.path.exists(captcha_path):
                             os.remove(captcha_path)
+                            os.rmdir(captcha_dir)
                         return True
 
                     # ERROR (Instant retry)
@@ -389,6 +390,10 @@ class Vahan:
                     "Trans Date": tds[5].text.strip(),
                     "Status": tds[6].text.strip()
                 }
+                if transaction["Trans Desc"]=="Transfer of Ownership" or "Transfer of Ownership" in transaction["Trans Desc"]:
+                    transaction["CMV form_29"] = "available"
+                else:
+                    transaction["CMV form_29"] = "not available"
                 transactions.append(transaction)
 
             return {"transactions": transactions}

@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'vahan_citizen',
-    'e_court_services'
+    'e_court_services',
+    'hc_madras',
 ]
 
 MIDDLEWARE = [

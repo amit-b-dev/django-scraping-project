@@ -76,7 +76,7 @@ class Vahan:
     def open_page(self, url):
         """Open the given URL in browser."""
         self.driver.get(url)
-        # time.sleep(5)
+        time.sleep(1)
 
     def close(self):
         """Close the browser properly."""
@@ -226,6 +226,7 @@ class Vahan:
                         ActionChains(self.driver).move_to_element(element).pause(0.3).click().perform()
                     except:
                         element.click()
+            
 
             # ---------------------------- CLOSE POPUP -----------------------------
             popup_btn = WebDriverWait(self.driver, 20).until(EC.element_to_be_clickable((By.XPATH, "//button[text()='Close']")))
@@ -418,10 +419,6 @@ class Vahan:
             print_btn = rows[upd_s_no].find_elements(By.TAG_NAME,'td')[-1].find_element(By.TAG_NAME,'span')
             self.driver.execute_script("arguments[0].scrollIntoView()", print_btn)
             print_btn.click()
-
-            # owner_name = WebDriverWait(self.driver,20).until(EC.presence_of_element_located((By.XPATH,"//label[text()='Owner Name: ']/parent::td/following-sibling::td/span"))).text.strip()
-            # chesis_no = WebDriverWait(self.driver,20).until(EC.presence_of_element_located((By.XPATH,"//label[text()='Chasis No:']/parent::td/following-sibling::td/span"))).text.strip()
-            # print(owner_name)
 
             try:
                 form29_btn = WebDriverWait(self.driver,2).until(EC.element_to_be_clickable((By.XPATH,"//span[text()='Print CMV form_29']")))

@@ -1,8 +1,8 @@
 from .vahan_helper import *
 
-print("🔥 Starting global Vahan driver...")
-GLOBAL_VAHAN_DRIVER = Vahan().driver
-print("🔥 Global Vahan driver ready!")
+# print("🔥 Starting global Vahan driver...")
+# GLOBAL_VAHAN_DRIVER = Vahan().driver
+# print("🔥 Global Vahan driver ready!")
 
 @api_view(['POST'])
 def vahan_timeline(request):
@@ -14,25 +14,15 @@ def vahan_timeline(request):
         max_retries = 3
         retry_delay = 1
         for attempt in range(max_retries):
-
-            # Get ViewState, Captcha, Cookies from your class
-            # view_state, captcha_image, cookies, current_id = Vahan.get_viewstate_and_cookies()
-
-            # Initialize scraper and use global driver
-            scraper = Vahan(driver=GLOBAL_VAHAN_DRIVER)
+            
+            # Initialize scraper
+            scraper = Vahan()
 
             # Open the target URL
             url = "https://vahan.parivahan.gov.in/vahanservice/vahan/ui/statevalidation/homepage.xhtml"
             scraper.open_page(url)
             response = scraper.timeline_data(vehicle_no)
-
-            driver=GLOBAL_VAHAN_DRIVER
-            if len(driver.window_handles)>1:
-                driver.close()
-                driver.switch_to.window(driver.window_handles[0])
-            scraper.reset_browser_session()
-
-
+            scraper.close()
             applications = response.get("applications", [])
             if applications:   # success → return immediately
                 return Response({
@@ -79,20 +69,19 @@ def vahan_timeline_via_s_no(request):
             # view_state, captcha_image, cookies, current_id = Vahan.get_viewstate_and_cookies()
 
             # Initialize scraper and use global driver
-            scraper = Vahan(driver=GLOBAL_VAHAN_DRIVER)
+            scraper = Vahan()
 
             # Open the target URL
             url = "https://vahan.parivahan.gov.in/vahanservice/vahan/ui/statevalidation/homepage.xhtml"
             scraper.open_page(url)
             response = scraper.timeline_data_via_s_no(vehicle_no,s_no)
 
-            driver=GLOBAL_VAHAN_DRIVER
-            if len(driver.window_handles)>1:
-                driver.close()
-                driver.switch_to.window(driver.window_handles[0])
-            scraper.reset_browser_session()
+            # if len(driver.window_handles)>1:
+            #     driver.close()
+            #     driver.switch_to.window(driver.window_handles[0])
+            # scraper.reset_browser_session()
 
-
+            scraper.close()
             applications = response.get("applications", [])
             if applications:   # success → return immediately
                 return Response({
@@ -139,23 +128,15 @@ def vahan_transactions_list(request):
         retry_delay = 1
         for attempt in range(max_retries):
 
-            # Get ViewState, Captcha, Cookies from your class
-            # view_state, captcha_image, cookies, current_id = Vahan.get_viewstate_and_cookies()
-
             # Initialize scraper
-            # use global driver
-            scraper = Vahan(driver=GLOBAL_VAHAN_DRIVER)
+            scraper = Vahan()
 
             # Open the target URL
             url = "https://vahan.parivahan.gov.in/vahanservice/vahan/ui/statevalidation/homepage.xhtml"
-            start_time2 = datetime.now()
             scraper.open_page(url)
             response = scraper.transaction_data(vehicle_no)
 
-            driver=GLOBAL_VAHAN_DRIVER
-            scraper.reset_browser_session()
-
-
+            scraper.close()
             transactions = response.get("transactions", [])
             if transactions:   # success → return immediately
                 return Response({

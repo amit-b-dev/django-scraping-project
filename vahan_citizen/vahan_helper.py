@@ -217,6 +217,12 @@ class Vahan:
     def navigate_to_reprint(self, vehicle_no):
         try:
 
+            start_time2 = datetime.now()
+            url = "https://vahan.parivahan.gov.in/vahanservice/vahan/ui/statevalidation/homepage.xhtml"
+            self.driver.get(url)
+            time.sleep(0.2)
+            print("Total Runtime2:", (datetime.now() - start_time2).total_seconds())
+
             def safe_click(element):
                 """Try JS click → normal click → ActionChains click."""
                 try:
@@ -232,7 +238,7 @@ class Vahan:
             popup_btn = WebDriverWait(self.driver, 20).until(EC.element_to_be_clickable((By.XPATH, "//button[text()='Close']")))
             try:
                 popup_btn.click()
-                # self.driver.execute_script('arguments[0].click()',popup_btn)
+                self.driver.execute_script('arguments[0].click()',popup_btn)
             except:
                 pass
             time.sleep(0.4)
@@ -242,12 +248,17 @@ class Vahan:
             reg_input = WebDriverWait(self.driver, 20).until(
                 EC.presence_of_element_located((By.ID, 'regnid'))
             )
-            try:reg_input.send_keys("MH28AB5366")
+            try:reg_input.send_keys(vehicle_no)
             except:
+                traceback.print_exc()
                 time.sleep(0.1)
                 popup_btn = WebDriverWait(self.driver, 20).until(EC.element_to_be_clickable((By.XPATH, "//button[text()='Close']")))
                 popup_btn.click()
             time.sleep(0.2)
+            reg_input = WebDriverWait(self.driver, 20).until(
+                EC.presence_of_element_located((By.ID, 'regnid'))
+            )
+            reg_input.send_keys(vehicle_no)
 
             # ---------------------------- CLICK CHECKBOX ---------------------------
             checkbox = WebDriverWait(self.driver, 20).until(EC.presence_of_element_located((By.XPATH,"//div[@class='ui-selectbooleancheckbox ui-chkbox ui-widget center-position']")))
@@ -312,7 +323,6 @@ class Vahan:
             if not self.navigate_to_reprint(vehicle_no):
                 return {}
 
-            # extract form 29
             rows = WebDriverWait(self.driver,20).until(
                 EC.presence_of_all_elements_located((By.XPATH,"//tbody[@id='tabView:tableTax_data']/tr"))
             )
@@ -360,11 +370,13 @@ class Vahan:
                     "grand_total":grand_total
 
                 }
-
+            
+            self.driver.quit()
             return {"applications": final_data}
 
         except:
             traceback.print_exc()
+            self.driver.quit()
             return {}
 
     def transaction_data(self, vehicle_no):
@@ -397,14 +409,17 @@ class Vahan:
                     transaction["CMV form_29"] = "not available"
                 transactions.append(transaction)
 
+            self.driver.quit()
             return {"transactions": transactions}
 
         except:
             traceback.print_exc()
+            self.driver.quit()
             return {}
 
     def timeline_data_via_s_no(self, vehicle_no,s_no):
         try:
+
             upd_s_no=int(s_no)-1
             if not self.navigate_to_reprint(vehicle_no):
                 return {}
@@ -420,11 +435,14 @@ class Vahan:
             self.driver.execute_script("arguments[0].scrollIntoView()", print_btn)
             print_btn.click()
 
-            try:
-                form29_btn = WebDriverWait(self.driver,2).until(EC.element_to_be_clickable((By.XPATH,"//span[text()='Print CMV form_29']")))
-            except:
-                print("❌ Form_29 not available for this vehicle")
-                return {"applications": None, "message": "Form_29 is not available"}
+            form29_btn = WebDriverWait(self.driver,5).until(EC.element_to_be_clickable((By.XPATH,"//span[text()='Print CMV form_29']")))
+
+            # try:
+            #     form29_btn = WebDriverWait(self.driver,5).until(EC.element_to_be_clickable((By.XPATH,"//span[text()='Print CMV form_29']")))
+            # except:
+            #     traceback.print_exc()
+            #     print("❌ Form_29 not available for this vehicle")
+            #     return {"applications": None, "message": "Form_29 is not available"}
             
             form29_btn = WebDriverWait(self.driver,10).until(EC.element_to_be_clickable((By.XPATH,"//span[text()='Print CMV form_29']")))
             self.driver.execute_script("arguments[0].scrollIntoView()", form29_btn)
@@ -451,8 +469,10 @@ class Vahan:
                 "buyer_address": txt[11],
             }
 
+            self.driver.quit()
             return {"applications": data}
 
         except:
             traceback.print_exc()
+            self.driver.quit()
             return {}

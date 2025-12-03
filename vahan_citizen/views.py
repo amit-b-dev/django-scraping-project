@@ -17,12 +17,8 @@ def vahan_timeline(request):
             
             # Initialize scraper
             scraper = Vahan()
-
-            # Open the target URL
-            url = "https://vahan.parivahan.gov.in/vahanservice/vahan/ui/statevalidation/homepage.xhtml"
-            scraper.open_page(url)
             response = scraper.timeline_data(vehicle_no)
-            scraper.close()
+
             applications = response.get("applications", [])
             if applications:   # success → return immediately
                 return Response({
@@ -33,14 +29,6 @@ def vahan_timeline(request):
                     # "total_pages": response.get("total_pages", 1)
                 }, status=200)
             
-            if not applications and response.get("message") == "Form_29 is not available":
-                return Response({
-                    "status": "success",  
-                    "data": [],
-                    "message": "Form_29 is not available",
-                }, status=200)
-
-
             logger.warning(f"Attempt {attempt+1}: No data received, retrying...")
             
             if attempt < max_retries - 1:
@@ -65,23 +53,10 @@ def vahan_timeline_via_s_no(request):
         retry_delay = 1
         for attempt in range(max_retries):
 
-            # Get ViewState, Captcha, Cookies from your class
-            # view_state, captcha_image, cookies, current_id = Vahan.get_viewstate_and_cookies()
-
-            # Initialize scraper and use global driver
+            # Initialize scraper
             scraper = Vahan()
-
-            # Open the target URL
-            url = "https://vahan.parivahan.gov.in/vahanservice/vahan/ui/statevalidation/homepage.xhtml"
-            scraper.open_page(url)
             response = scraper.timeline_data_via_s_no(vehicle_no,s_no)
 
-            # if len(driver.window_handles)>1:
-            #     driver.close()
-            #     driver.switch_to.window(driver.window_handles[0])
-            # scraper.reset_browser_session()
-
-            scraper.close()
             applications = response.get("applications", [])
             if applications:   # success → return immediately
                 return Response({
@@ -91,12 +66,6 @@ def vahan_timeline_via_s_no(request):
                     # "current_id": current_id,
                     # "total_pages": response.get("total_pages", 1)
                 }, status=200)
-            
-            if not applications and response.get("message") == "Form_29 is not available":
-                return Response({"status": "success",  
-                                 "data": [],
-                                 "message": "Form_29 is not available",
-                                 }, status=200)
             
             if not applications and response.get("message") == "s_no is incorrect. please check the s_no":
                 return Response({"status": "success",  
@@ -130,13 +99,7 @@ def vahan_transactions_list(request):
 
             # Initialize scraper
             scraper = Vahan()
-
-            # Open the target URL
-            url = "https://vahan.parivahan.gov.in/vahanservice/vahan/ui/statevalidation/homepage.xhtml"
-            scraper.open_page(url)
             response = scraper.transaction_data(vehicle_no)
-
-            scraper.close()
             transactions = response.get("transactions", [])
             if transactions:   # success → return immediately
                 return Response({

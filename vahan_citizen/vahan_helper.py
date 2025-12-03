@@ -217,11 +217,9 @@ class Vahan:
     def navigate_to_reprint(self, vehicle_no):
         try:
 
-            start_time2 = datetime.now()
             url = "https://vahan.parivahan.gov.in/vahanservice/vahan/ui/statevalidation/homepage.xhtml"
             self.driver.get(url)
             time.sleep(0.2)
-            print("Total Runtime2:", (datetime.now() - start_time2).total_seconds())
 
             def safe_click(element):
                 """Try JS click → normal click → ActionChains click."""
@@ -250,15 +248,12 @@ class Vahan:
             )
             try:reg_input.send_keys(vehicle_no)
             except:
-                traceback.print_exc()
                 time.sleep(0.1)
                 popup_btn = WebDriverWait(self.driver, 20).until(EC.element_to_be_clickable((By.XPATH, "//button[text()='Close']")))
                 popup_btn.click()
-            time.sleep(0.2)
-            reg_input = WebDriverWait(self.driver, 20).until(
-                EC.presence_of_element_located((By.ID, 'regnid'))
-            )
-            reg_input.send_keys(vehicle_no)
+                time.sleep(0.4)
+                reg_input = WebDriverWait(self.driver, 20).until(EC.presence_of_element_located((By.ID, 'regnid')))
+                reg_input.send_keys(vehicle_no)
 
             # ---------------------------- CLICK CHECKBOX ---------------------------
             checkbox = WebDriverWait(self.driver, 20).until(EC.presence_of_element_located((By.XPATH,"//div[@class='ui-selectbooleancheckbox ui-chkbox ui-widget center-position']")))

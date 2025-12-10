@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import vahan_timeline,vahan_transactions_list,vahan_timeline_via_s_no
+from .vahan.vahan_scraper import vahan_timeline,vahan_transactions_list,vahan_timeline_via_s_no
 
 urlpatterns = [
     path('v1/vahan/timeline', vahan_timeline, name="vahan_timeline"),

@@ -1,8 +1,9 @@
-from .vahan_helper import *
-
-# print("🔥 Starting global Vahan driver...")
-# GLOBAL_VAHAN_DRIVER = Vahan().driver
-# print("🔥 Global Vahan driver ready!")
+from venv import logger
+from .vahanScraper import *
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
+import time
+from datetime import datetime
 
 @api_view(['POST'])
 def vahan_timeline(request):
@@ -14,9 +15,9 @@ def vahan_timeline(request):
         max_retries = 3
         retry_delay = 1
         for attempt in range(max_retries):
-            
-            # Initialize scraper
-            scraper = Vahan()
+            # Initialize scraper and use global driver
+            scraper = VahanScraper()
+            # Open the target URL
             response = scraper.timeline_data(vehicle_no)
 
             applications = response.get("applications", [])
@@ -29,6 +30,14 @@ def vahan_timeline(request):
                     # "total_pages": response.get("total_pages", 1)
                 }, status=200)
             
+            if not applications and response.get("message") == "Form_29 is not available":
+                return Response({
+                    "status": "success",  
+                    "data": [],
+                    "message": "Form_29 is not available",
+                }, status=200)
+
+
             logger.warning(f"Attempt {attempt+1}: No data received, retrying...")
             
             if attempt < max_retries - 1:
@@ -53,11 +62,15 @@ def vahan_timeline_via_s_no(request):
         retry_delay = 1
         for attempt in range(max_retries):
 
-            # Initialize scraper
-            scraper = Vahan()
-            response = scraper.timeline_data_via_s_no(vehicle_no,s_no)
+            # Get ViewState, Captcha, Cookies from your class
+            # view_state, captcha_image, cookies, current_id = Vahan.get_viewstate_and_cookies()
+
+            # Initialize scraper and use global driver
+            scraper = VahanScraper()
+            response = scraper.form29_via_s_no(vehicle_no,int(s_no))
 
             applications = response.get("applications", [])
+            driver = response.get("driver", [])
             if applications:   # success → return immediately
                 return Response({
                     "status": "success",
@@ -67,6 +80,12 @@ def vahan_timeline_via_s_no(request):
                     # "total_pages": response.get("total_pages", 1)
                 }, status=200)
             
+            if not applications and response.get("message") == "Form_29 is not available":
+                return Response({"status": "success",  
+                                 "data": [],
+                                 "message": "Form_29 is not available",
+                                 }, status=200)
+            
             if not applications and response.get("message") == "s_no is incorrect. please check the s_no":
                 return Response({"status": "success",  
                                  "data": [],
@@ -75,7 +94,6 @@ def vahan_timeline_via_s_no(request):
 
 
             logger.warning(f"Attempt {attempt+1}: No data received, retrying...")
-            
             if attempt < max_retries - 1:
                 time.sleep(retry_delay)
 
@@ -97,9 +115,14 @@ def vahan_transactions_list(request):
         retry_delay = 1
         for attempt in range(max_retries):
 
+            # Get ViewState, Captcha, Cookies from your class
+            # view_state, captcha_image, cookies, current_id = Vahan.get_viewstate_and_cookies()
+
             # Initialize scraper
-            scraper = Vahan()
+            # use global driver
+            scraper = VahanScraper()
             response = scraper.transaction_data(vehicle_no)
+            
             transactions = response.get("transactions", [])
             if transactions:   # success → return immediately
                 return Response({

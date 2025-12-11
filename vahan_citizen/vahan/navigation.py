@@ -13,7 +13,7 @@ class NavigationFlow:
 
     def load_homepage(self,url):
         res = self.session.get(url, headers=HeaderHelper.home_page_header_fun())
-        time.sleep(1)
+        time.sleep(0.1)
 
         soup = BeautifulSoup(res.text, "html.parser")
 
@@ -36,9 +36,9 @@ class NavigationFlow:
         )
 
         self.session.post(url, headers=check_box_header, data=check_box_payload, cookies=cookies)
-        time.sleep(1)
+        time.sleep(0.1)
         self.session.post(url, headers=check_box_header, data=proceed_btn_payload, cookies=cookies)
-        time.sleep(1)
+        time.sleep(0.1)
 
     def again_proceed(self,url, cookies):
         res = self.session.get(url, headers=HeaderHelper.again_proceed_btn_fun(),cookies=cookies)
@@ -53,12 +53,12 @@ class NavigationFlow:
     def load_login_page(self,url, view_state,j_id1,j_id2, cookies):
         userlogin_header,userlogin_payload = HeaderHelper.userlogin_fun(view_state,j_id1,j_id2)
         res = self.session.post(url, headers=userlogin_header, data=userlogin_payload, cookies=cookies)
-        time.sleep(1)
+        time.sleep(0.1)
         return res
     
     def form_eAppCommonHomeLogin_page(self,url, cookies):
         res = self.session.get(url, headers=HeaderHelper.form_eAppCommonHomeLogin_header(),cookies=cookies)
-        time.sleep(1)
+        time.sleep(0.1)
         soup = BeautifulSoup(res.text, "html.parser")
         view_state = soup.find("input", {"id": "j_id1:javax.faces.ViewState:0"}).get("value")
         return view_state,soup
@@ -66,7 +66,7 @@ class NavigationFlow:
     def select_registration_no_wise_fun(self, url, view_state, cookies):
         header, payload = HeaderHelper.registration_no_wise(view_state)
         r7 = self.session.post(url, headers=header,data=payload,cookies=cookies)
-        time.sleep(1)
+        time.sleep(0.1)
         match = re.search(r'<update id="j_id1:javax\.faces\.ViewState:0"><!\[CDATA\[(.*?)\]\]>',r7.text,re.S)
         view_state = match.group(1)
 
@@ -75,7 +75,7 @@ class NavigationFlow:
     def select_application(self,url,view_state, cookies):
         header,payload=HeaderHelper.select_application_header(view_state)
         res = self.session.post(url, headers=header,data=payload,cookies=cookies)
-        time.sleep(0.5)
+        time.sleep(0.1)
         xml = res.text
         match = re.search(r'<update id="j_id1:javax\.faces\.ViewState:0"><!\[CDATA\[(.*?)\]\]>',xml,re.S)
         view_state = match.group(1)
@@ -85,7 +85,7 @@ class NavigationFlow:
     def select_RTO_end(self,url,view_state, cookies):
         header,payload=HeaderHelper.select_RTO_end_header(view_state)
         r9 = self.session.post(url, headers=header,data=payload,cookies=cookies)
-        time.sleep(0.5)
+        time.sleep(0.1)
         xml = r9.text
         match = re.search(r'<update id="j_id1:javax\.faces\.ViewState:0"><!\[CDATA\[(.*?)\]\]>',xml,re.S)
         view_state = match.group(1)
@@ -101,7 +101,7 @@ class NavigationFlow:
         captcha_url = "https://vahan.parivahan.gov.in" + captcha_tag["src"]
         header = HeaderHelper.captcha_img()
         img_res = self.session.get(captcha_url, headers=header,cookies=cookies)
-        time.sleep(0.5)
+        time.sleep(0.1)
         captcha_text,captcha_path,captcha_dir = self.solver.solve(img_res)
         return captcha_text,mode, captcha_path, captcha_dir
     
@@ -109,7 +109,7 @@ class NavigationFlow:
         
         header,payload=HeaderHelper.captcha_requests(view_state,captcha_text,mode,reg_no)
         r10 = self.session.post(url, data=payload, headers=header,cookies=cookies)
-        time.sleep(0.5)
+        time.sleep(0.1)
         xml = r10.text
         match = re.search(r'<update id="j_id1:javax\.faces\.ViewState:0"><!\[CDATA\[(.*?)\]\]>',xml,re.S)
         view_state = match.group(1)
@@ -126,7 +126,7 @@ class NavigationFlow:
         header,payload=HeaderHelper.click_on_show_details_fun(view_state,captcha_text,reg_no)
         url = "https://vahan.parivahan.gov.in/vahanservice/vahan/ui/eapplication/form_eAppCommonHomeLogin.xhtml"
         r11 = self.session.post(url, data=payload, headers=header,cookies=cookies)
-        time.sleep(0.5)
+        time.sleep(0.1)
         soup = BeautifulSoup(r11.text, "html.parser")
         view_state = soup.find("input", {"id": "j_id1:javax.faces.ViewState:0"}).get("value")
         return soup,view_state
@@ -134,14 +134,14 @@ class NavigationFlow:
     def open_receipt_page(self,url,view_state, dynamic_id, cookies):
         header,payload=HeaderHelper.click_on_print_receipt(view_state,dynamic_id)
         r12 = self.session.post(url, data=payload, headers=header,cookies=cookies)
-        time.sleep(0.5)
+        time.sleep(0.1)
     
     def get_print_receipt_page(self,url,cookies):
         print("Enter get_print_receipt_page function.....")
 
         header=HeaderHelper.print_receipt_page_header()
         r12 = self.session.post(url, headers=header,cookies=cookies)
-        time.sleep(0.5)
+        time.sleep(0.1)
         soup = BeautifulSoup(r12.text, "html.parser")
         return soup
 
@@ -150,6 +150,25 @@ class NavigationFlow:
         
         header,payload=HeaderHelper.form_29_data_header(view_state,form_29_btn_id,trans_id)
         r15 = self.session.post(url, data=payload, headers=header,cookies=cookies)
-        time.sleep(0.5)
+        time.sleep(0.1)
         soup = BeautifulSoup(r15.text, "html.parser")
         return soup
+    
+    def get_all_pages_soup(self,soup,view_state,cookies):
+        print("Enter get_all_pages_soup function.....")
+        url = "https://vahan.parivahan.gov.in/vahanservice/vahan/ui/eapplication/form_eAppCommonHomeLogin.xhtml"
+        view_state = soup.find("input", {"id": "j_id1:javax.faces.ViewState:0"}).get("value")
+        pages = soup.find(class_='ui-paginator-pages').find_all('a')
+        last_page_no = soup.find(id='tabView:tableTax_data').find_all('tr')[-1].find('td').get_text(strip=True)
+        all_pages_soup = []
+        all_pages_soup.append(soup)
+        for _ in range(1,len(pages)):
+            header,payload=HeaderHelper.pagination_header(view_state,last_page_no)
+            res = self.session.post(url, data=payload, headers=header,cookies=cookies)
+            time.sleep(0.1)
+            soup_xml = BeautifulSoup(res.text, "xml")
+            html_fragment = soup_xml.find("update", {"id": "tabView:tableTax"}).string
+            soup = BeautifulSoup(html_fragment, "html.parser")
+            all_pages_soup.append(soup)
+            last_page_no = soup.find_all('tr')[-1].find('td').get_text(strip=True)
+        return all_pages_soup

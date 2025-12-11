@@ -1,3 +1,4 @@
+from datetime import datetime
 from bs4 import BeautifulSoup
 import numpy as np
 import os,time,cv2,base64,requests,traceback
@@ -41,7 +42,6 @@ class CaptchaSolver:
 
         for _ in range(1, max_retries + 1):
             try:
-                time.sleep(2)
                 with open(self.captcha_path, "wb") as f:
                     f.write(img_res.content)
                 self.convert_image_back_to_white_bg()
@@ -49,9 +49,9 @@ class CaptchaSolver:
  
                 with open(self.captcha_path, "rb") as f:
                     base64_image = base64.b64encode(f.read()).decode()
-
+                start_time = datetime.now()
                 captcha_text = google_ocr(base64_image).strip()
-                
+                print("Total Runtime:", (datetime.now() - start_time).total_seconds())
                 return captcha_text,self.captcha_path,self.captcha_dir
  
             except:

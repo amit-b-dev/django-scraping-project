@@ -1,6 +1,6 @@
 from django.urls import path
-from .views import e_court_services_cnr_no
+from .views import hc_madras_data_by_cnr_no
 
 urlpatterns = [
-    path('v1/hc-madras/cnr', e_court_services_cnr_no, name="e_court_services_cnr_no"),
+    path('v1/hc-madras/cnr', hc_madras_data_by_cnr_no, name="hc_madras_data_by_cnr_no"),
 ]

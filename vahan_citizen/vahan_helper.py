@@ -132,7 +132,7 @@ class Vahan:
         # Skip inpainting if no line
         if cv2.countNonZero(mask) < 50:
             cv2.imwrite(captcha_path, img)
-            return
+            return True
 
         cleaned = cv2.inpaint(img, mask, 3, cv2.INPAINT_NS)   # faster
         cv2.imwrite(captcha_path, cleaned)

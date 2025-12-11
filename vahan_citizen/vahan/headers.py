@@ -405,3 +405,43 @@ class HeaderHelper:
             "Priority": "u=5, i"
         }
         return header
+
+    def pagination_header(view_state,last_page_no="15",rows_per_page="15"):
+        header = {
+            "Accept": "application/xml, text/xml, */*; q=0.01",
+            "Accept-Encoding": "gzip, deflate, br, zstd",
+            "Accept-Language": "en-US,en;q=0.5",
+            "Connection": "keep-alive",
+            "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+            "Faces-Request": "partial/ajax",
+            "Host": "vahan.parivahan.gov.in",
+            "Origin": "https://vahan.parivahan.gov.in",
+            "Priority": "u=0",
+            "Referer": "https://vahan.parivahan.gov.in/vahanservice/vahan/ui/eapplication/form_eAppCommonHomeLogin.xhtml",
+            "Sec-Fetch-Dest": "empty",
+            "Sec-Fetch-Mode": "cors",
+            "Sec-Fetch-Site": "same-origin",
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:145.0) Gecko/20100101 Firefox/145.0",
+            "X-Requested-With": "XMLHttpRequest"
+        }
+
+        payload = {
+            "javax.faces.partial.ajax": "true",
+            "javax.faces.source": "tabView:tableTax",
+            "javax.faces.partial.execute": "tabView:tableTax",
+            "javax.faces.partial.render": "tabView:tableTax",
+
+            "tabView:tableTax": "tabView:tableTax",
+            "tabView:tableTax_pagination": "true",
+            "tabView:tableTax_first":last_page_no,      # starting index of next page
+            "tabView:tableTax_rows": rows_per_page,       # rows per page
+            "tabView:tableTax_skipChildren": "true",
+            "tabView:tableTax_encodeFeature": "true",
+
+            "form_eapp": "form_eapp",
+            "tabView_activeIndex": "0",
+
+            "javax.faces.ViewState": view_state
+        }
+        
+        return header, payload

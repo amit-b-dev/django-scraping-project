@@ -67,10 +67,9 @@ def vahan_timeline_via_s_no(request):
 
             # Initialize scraper and use global driver
             scraper = VahanScraper()
-            response = scraper.form29_via_s_no(vehicle_no,int(s_no))
+            response = scraper.form29_via_s_no(vehicle_no,s_no)
 
             applications = response.get("applications", [])
-            driver = response.get("driver", [])
             if applications:   # success → return immediately
                 return Response({
                     "status": "success",
@@ -80,10 +79,10 @@ def vahan_timeline_via_s_no(request):
                     # "total_pages": response.get("total_pages", 1)
                 }, status=200)
             
-            if not applications and response.get("message") == "Form_29 is not available":
+            if not applications and response.get("message") == "form 29 is not available":
                 return Response({"status": "success",  
                                  "data": [],
-                                 "message": "Form_29 is not available",
+                                 "message": "form 29 is not available",
                                  }, status=200)
             
             if not applications and response.get("message") == "s_no is incorrect. please check the s_no":

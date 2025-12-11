@@ -1,7 +1,7 @@
 import requests
- 
-def google_ocr(base64_image):
 
+def google_ocr(base64_image):
+    
     api_key = "AIzaSyDCNRpug2TxiTP407h3frQH0GUH3LkFVoE"
 
     # Remove the "data:image/jpeg;base64," prefix if present
@@ -34,4 +34,4 @@ def google_ocr(base64_image):
             return ""
     except (KeyError, IndexError) as e:
         print("Unexpected response format:", result)
-        return ""
+        return "" 

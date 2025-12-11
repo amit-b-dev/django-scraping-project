@@ -111,7 +111,8 @@ class e_court_services:
             with open(captcha_path, "rb") as f:
                 base64_image = base64.b64encode(f.read()).decode()
             
-            captcha_text = self.google_ocr(base64_image).strip()
+            # captcha_text = self.google_ocr(base64_image).strip()
+            captcha_text = ""
             print(f" OCR Detected CAPTCHA: '{captcha_text}'")
             
             print("Captcha saved: captcha.jpg")

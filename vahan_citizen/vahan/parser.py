@@ -104,20 +104,24 @@ class Extractor:
                 table_data[label2] = value2
         return table_data
 
+    def safe_get(lst, idx):
+        return lst[idx] if len(lst) > idx else ""
+
     def extract_form29(self,soup):
 
         b = [tag.get_text(strip=True).replace("\xa0", " ") for tag in soup.find_all("b")]
         try:combined_date = datetime.strptime(f"{b[2]} {b[3]} {b[4]}", "%d %b %Y").strftime("%Y-%m-%d")
         except:combined_date=""
         return {
-            "seller_name": b[0],
-            "seller_address": b[1],
-            "sold_date": combined_date,
-            "vehicle_number": b[5],
-            "maker": b[6],
-            "chassis_number": b[7],
-            "engine_number": b[8],
-            "buyer_name": b[9],
-            "buyer_parent": b[10],
-            "buyer_address": b[11]
+            "seller_name":      Extractor.safe_get(b, 0),
+            "seller_address":   Extractor.safe_get(b, 1),
+            "sold_date":        combined_date,
+            "vehicle_number":   Extractor.safe_get(b, 5),
+            "maker":            Extractor.safe_get(b, 6),
+            "chassis_number":   Extractor.safe_get(b, 7),
+            "engine_number":    Extractor.safe_get(b, 8),
+            "buyer_name":       Extractor.safe_get(b, 9),
+            "buyer_parent":     Extractor.safe_get(b, 10),
+            "buyer_address":    Extractor.safe_get(b, 11)
         }
+

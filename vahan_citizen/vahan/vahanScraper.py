@@ -1,4 +1,3 @@
-# scraper.py
 import time, traceback
 from bs4 import BeautifulSoup
 from .navigation import NavigationFlow
@@ -97,7 +96,7 @@ class VahanScraper:
             traceback.print_exc()
             return {"applications": []}
 
-    # def form29_via_s_no1(self, reg_no):
+    # def fetch_form29(self, reg_no):
     #     try:
     #         print("Enter form29_via_s_no function.....")
 

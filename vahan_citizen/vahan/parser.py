@@ -5,9 +5,10 @@ class Extractor:
     def __init__(self, session):
         self.session = session
 
-    def get_all_transacton_rows(self, soup11,upd_s_no=0):
-        all_tr = soup11.find(id='tabView:tableTax_data').find_all('tr')
-        return all_tr
+    # def get_all_transacton_rows(self, soup11,upd_s_no=0):
+    #     all_tr = soup11.find(id='tabView:tableTax_data').find_all('tr')
+    #     return all_tr
+    
     def extract_receipt_button_for_timeline(self, soup11,upd_s_no=0):
         all_tr = soup11.find(id='tabView:tableTax_data').find_all('tr')
         dynamic_id = all_tr[upd_s_no].find('button')['id']
@@ -49,30 +50,30 @@ class Extractor:
                 
         return transactions,all_tr_for_s_no
 
-    def get_all_transaction_data1(self, soup11):
-        all_tr = soup11.find(id='tabView:tableTax_data').find_all('tr')
-        transactions=[]
-        for tr in all_tr:
-            tds = tr.find_all("td")
-            if len(tds) < 7:
-                continue
+    # def get_all_transaction_data1(self, soup11):
+    #     all_tr = soup11.find(id='tabView:tableTax_data').find_all('tr')
+    #     transactions=[]
+    #     for tr in all_tr:
+    #         tds = tr.find_all("td")
+    #         if len(tds) < 7:
+    #             continue
 
-            transaction = {
-                "Sl No": tds[0].text.strip(),
-                "Regn No": tds[1].text.strip(),
-                "Trans Desc": tds[2].text.strip(),
-                "Trans ID": tds[3].text.strip(),
-                "Trans Amt": tds[4].text.strip(),
-                "Trans Date": tds[5].text.strip(),
-                "Status": tds[6].text.strip()
-            }
-            if transaction["Trans Desc"]=="Transfer of Ownership" or "Transfer of Ownership" in transaction["Trans Desc"]:
-                transaction["CMV form_29"] = "available"
-                return transaction["Sl No"]
-            # else:
-            #     transaction["CMV form_29"] = "not available"
+    #         transaction = {
+    #             "Sl No": tds[0].text.strip(),
+    #             "Regn No": tds[1].text.strip(),
+    #             "Trans Desc": tds[2].text.strip(),
+    #             "Trans ID": tds[3].text.strip(),
+    #             "Trans Amt": tds[4].text.strip(),
+    #             "Trans Date": tds[5].text.strip(),
+    #             "Status": tds[6].text.strip()
+    #         }
+    #         if transaction["Trans Desc"]=="Transfer of Ownership" or "Transfer of Ownership" in transaction["Trans Desc"]:
+    #             transaction["CMV form_29"] = "available"
+    #             return transaction["Sl No"]
+    #         # else:
+    #         #     transaction["CMV form_29"] = "not available"
             
-        return None
+    #     return None
 
     def extract_form_29_button(self, soup12):
         
@@ -106,13 +107,12 @@ class Extractor:
     def extract_form29(self,soup):
 
         b = [tag.get_text(strip=True).replace("\xa0", " ") for tag in soup.find_all("b")]
-
-        combined_date = datetime.strptime(f"{b[2]} {b[3]} {b[4]}", "%d %b %Y").strftime("%Y-%m-%d")
-
+        try:combined_date = datetime.strptime(f"{b[2]} {b[3]} {b[4]}", "%d %b %Y").strftime("%Y-%m-%d")
+        except:combined_date=""
         return {
             "seller_name": b[0],
             "seller_address": b[1],
-            "sold_name": combined_date,
+            "sold_date": combined_date,
             "vehicle_number": b[5],
             "maker": b[6],
             "chassis_number": b[7],

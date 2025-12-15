@@ -96,6 +96,143 @@ class VahanScraper:
             traceback.print_exc()
             return {"applications": []}
 
+    def fetch_form29(self, reg_no):
+        try:
+            # print("Enter form29_via_s_no function.....")
+            form_29={}
+            form_29_count=1
+            soup,view_state = self.common.prepare_context(reg_no)
+            all_pages_soup = self.flow.get_all_pages_soup_for_transaction_data(soup,view_state,self.cookies)
+            # transactions,all_tr_for_s_no = self.extract.get_all_transaction_data(all_pages_soup)
+            s_no_for_form_29,all_tr_for_s_no = self.extract.get_all_transaction_data1(all_pages_soup)
+
+            for i,s_no in enumerate(s_no_for_form_29):
+                s_no = int(s_no) - 1
+                all_pages_soup,view_state = self.flow.get_all_pages_soup(soup,view_state,self.cookies,s_no)
+                dynamic_id, trans_id = self.extract.extract_receipt_button(all_tr_for_s_no,s_no)
+
+                # POST requests print receipt
+                url = "https://vahan.parivahan.gov.in/vahanservice/vahan/ui/eapplication/form_eAppCommonHomeLogin.xhtml"
+                self.flow.open_receipt_page(url,view_state, dynamic_id, self.cookies)
+
+                # get print receipt page
+                url="https://vahan.parivahan.gov.in/vahanservice/vahan/ui/eapplication/formFeeRecieptPrintReport.xhtml"
+                soup = self.flow.get_print_receipt_page(url, self.cookies)
+
+                # Load receipt page
+                form_29_btn_id, view_state,form_29_exists_or_not = self.extract.extract_form_29_button(soup)
+                if form_29_exists_or_not:
+                    return {"applications": None, "message": "form 29 is not available"}
+
+                url="https://vahan.parivahan.gov.in/vahanservice/vahan/ui/eapplication/formFeeRecieptPrintReport.xhtml"
+                soup = self.flow.get_form_29_data(url,view_state,form_29_btn_id,trans_id,self.cookies)
+
+                # Extract form 29
+                data = self.extract.extract_form29(soup)
+                form_29[str(form_29_count)] = data
+                form_29_count += 1
+
+                if i < len(s_no_for_form_29) - 1:
+                    try:soup, view_state = self.common.prepare_context(reg_no)
+                    except:soup, view_state = self.common.prepare_context(reg_no)
+                
+            if not form_29:
+                return {"applications": None, "message": "Form 29 not available"}
+
+            return {"applications": form_29}
+
+        except Exception:
+            traceback.print_exc()
+            return {"applications": []}
+
+    # def fetch_form29(self, reg_no):
+    #     try:
+    #         print("Enter form29_via_s_no function.....")
+            # form_29={}
+            # form_29_count=1
+
+    #         soup,view_state = self.common.prepare_context(reg_no)
+    #         all_pages_soup = self.flow.get_all_pages_soup_for_transaction_data1(soup,view_state,self.cookies)
+    #         s_no_for_form_29,all_tr_for_s_no = self.extract.get_all_transaction_data1(all_pages_soup)
+    #         for i,s_no in enumerate(s_no_for_form_29):
+    #             s_no = int(s_no) - 1
+    #             dynamic_id, trans_id = self.extract.extract_receipt_button(all_tr_for_s_no,int(s_no))
+
+    #             # POST requests print receipt
+    #             url = "https://vahan.parivahan.gov.in/vahanservice/vahan/ui/eapplication/form_eAppCommonHomeLogin.xhtml"
+    #             self.flow.open_receipt_page(url,view_state, dynamic_id, self.cookies)
+
+    #             # get print receipt page
+    #             url="https://vahan.parivahan.gov.in/vahanservice/vahan/ui/eapplication/formFeeRecieptPrintReport.xhtml"
+    #             soup = self.flow.get_print_receipt_page(url, self.cookies)
+
+    #             # Load receipt page
+    #             form_29_btn_id, view_state,form_29_exists_or_not = self.extract.extract_form_29_button(soup)
+    #             if form_29_exists_or_not:
+    #                 continue
+
+    #             url="https://vahan.parivahan.gov.in/vahanservice/vahan/ui/eapplication/formFeeRecieptPrintReport.xhtml"
+    #             soup = self.flow.get_form_29_data(url,view_state,form_29_btn_id,trans_id,self.cookies)
+
+    #             # Extract form 29
+                # data = self.extract.extract_form29(soup)
+                # form_29[f"{form_29_count}st form 29"] = data
+                # form_29_count += 1
+    #             if i < len(s_no_for_form_29) - 1:
+    #                 soup, view_state = self.common.prepare_context(reg_no)
+
+            # if not form_29:
+            #     return {"applications": None, "message": "Form 29 not available"}
+
+    #         return {"applications": form_29}
+
+    #     except Exception:
+    #         traceback.print_exc()
+    #         return {"applications": []}
+
+    # def fetch_form29(self, reg_no):
+    #     try:
+    #         print("Enter form29_via_s_no function.....")
+    #         form_29={}
+    #         form_29_count=1
+
+    #         soup,view_state = self.common.prepare_context(reg_no)
+    #         all_pages_soup = self.flow.get_all_pages_soup_for_transaction_data1(soup,view_state,self.cookies)
+    #         s_no_for_form_29,all_tr_for_s_no = self.extract.get_all_transaction_data1(all_pages_soup)
+    #         for s_no, view_state in s_no_for_form_29:
+    #             s_no = int(s_no) - 1
+    #             dynamic_id, trans_id = self.extract.extract_receipt_button(all_tr_for_s_no,int(s_no))
+
+    #             # POST requests print receipt
+    #             url = "https://vahan.parivahan.gov.in/vahanservice/vahan/ui/eapplication/form_eAppCommonHomeLogin.xhtml"
+    #             self.flow.open_receipt_page(url,view_state, dynamic_id, self.cookies)
+
+    #             # get print receipt page
+    #             url="https://vahan.parivahan.gov.in/vahanservice/vahan/ui/eapplication/formFeeRecieptPrintReport.xhtml"
+    #             soup = self.flow.get_print_receipt_page(url, self.cookies)
+
+    #             # Load receipt page
+    #             form_29_btn_id, view_state,form_29_exists_or_not = self.extract.extract_form_29_button(soup)
+    #             if form_29_exists_or_not:
+    #                 continue
+
+    #             url="https://vahan.parivahan.gov.in/vahanservice/vahan/ui/eapplication/formFeeRecieptPrintReport.xhtml"
+    #             soup = self.flow.get_form_29_data(url,view_state,form_29_btn_id,trans_id,self.cookies)
+
+    #             # Extract form 29
+    #             data = self.extract.extract_form29(soup)
+    #             form_29[f"{form_29_count}st form 29"] = data
+    #             form_29_count += 1
+
+    #         if not form_29:
+    #             return {"applications": None, "message": "Form 29 not available"}
+
+    #         return {"applications": form_29}
+
+    #     except Exception:
+    #         traceback.print_exc()
+    #         return {"applications": []}
+
     # def fetch_form29(self, reg_no):
     #     try:
     #         print("Enter form29_via_s_no function.....")

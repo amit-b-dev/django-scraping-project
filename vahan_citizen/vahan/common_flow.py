@@ -23,12 +23,12 @@ class CommonFlow:
             if k in ("key", "JSESSIONID") or k.startswith("SERVERID_")
         }
 
-        # Extract homepage IDs
-        check_box_id, input_id, sele_input_id = self.flow.extract_homepage_ids(soup1)
+        # # Extract homepage IDs
+        # check_box_id, input_id, sele_input_id = self.flow.extract_homepage_ids(soup1)
 
-        # Submit checkbox
-        self.flow.submit_checkbox(url_home, check_box_id, input_id, sele_input_id,
-                                  reg_no, view_state1, view_state2, self.cookies)
+        # # Submit checkbox
+        # self.flow.submit_checkbox(url_home, check_box_id, input_id, sele_input_id,
+        #                           reg_no, view_state1, view_state2, self.cookies)
 
         # Again Proceed
         url_again = "https://vahan.parivahan.gov.in/vahanservice/vahan/ui/usermgmt/login.xhtml?faces-redirect=true"
@@ -55,10 +55,10 @@ class CommonFlow:
             )
             if solved:
                 print('captcha correct')
-                if os.path.exists(captcha_path):
-                    os.remove(captcha_path)
-                if os.path.isdir(captcha_dir):
-                    os.rmdir(captcha_dir)
+                # if os.path.exists(captcha_path):
+                #     os.remove(captcha_path)
+                # if os.path.isdir(captcha_dir):
+                #     os.rmdir(captcha_dir)
                 break
             print('captcha incorrect - retrying......')
 

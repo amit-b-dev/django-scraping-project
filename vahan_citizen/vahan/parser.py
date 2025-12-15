@@ -50,30 +50,37 @@ class Extractor:
                 
         return transactions,all_tr_for_s_no
 
-    # def get_all_transaction_data1(self, soup11):
-    #     all_tr = soup11.find(id='tabView:tableTax_data').find_all('tr')
-    #     transactions=[]
-    #     for tr in all_tr:
-    #         tds = tr.find_all("td")
-    #         if len(tds) < 7:
-    #             continue
+    def get_all_transaction_data1(self, all_pages_soup):
+        transactions=[]
+        all_tr_for_s_no=[]
+        s_no_for_form_29=[]
+        for soup in all_pages_soup:
+            all_tr = soup.find_all('tr')
+            if len(all_tr)==16:
+                all_tr.pop(0)
+            for tr in all_tr:
+                all_tr_for_s_no.append(tr)
+                tds = tr.find_all("td")
+                if len(tds) < 7:
+                    continue
 
-    #         transaction = {
-    #             "Sl No": tds[0].text.strip(),
-    #             "Regn No": tds[1].text.strip(),
-    #             "Trans Desc": tds[2].text.strip(),
-    #             "Trans ID": tds[3].text.strip(),
-    #             "Trans Amt": tds[4].text.strip(),
-    #             "Trans Date": tds[5].text.strip(),
-    #             "Status": tds[6].text.strip()
-    #         }
-    #         if transaction["Trans Desc"]=="Transfer of Ownership" or "Transfer of Ownership" in transaction["Trans Desc"]:
-    #             transaction["CMV form_29"] = "available"
-    #             return transaction["Sl No"]
-    #         # else:
-    #         #     transaction["CMV form_29"] = "not available"
-            
-    #     return None
+                transaction = {
+                    "Sl No": tds[0].text.strip(),
+                    "Regn No": tds[1].text.strip(),
+                    "Trans Desc": tds[2].text.strip(),
+                    "Trans ID": tds[3].text.strip(),
+                    "Trans Amt": tds[4].text.strip(),
+                    "Trans Date": tds[5].text.strip(),
+                    "Status": tds[6].text.strip()
+                }
+                if transaction["Trans Desc"]=="Transfer of Ownership" or "Transfer of Ownership" in transaction["Trans Desc"]:
+                    transaction["CMV form_29"] = "available"
+                    s_no_for_form_29.append(transaction["Sl No"])
+                else:
+                    transaction["CMV form_29"] = "not available"
+                transactions.append(transaction)
+                
+        return s_no_for_form_29,all_tr_for_s_no
 
     def extract_form_29_button(self, soup12):
         

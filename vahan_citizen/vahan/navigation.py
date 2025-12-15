@@ -154,7 +154,7 @@ class NavigationFlow:
         soup = BeautifulSoup(r15.text, "html.parser")
         return soup
     
-    def get_all_pages_soup(self,soup,view_state,cookies):
+    def get_all_pages_soup_for_transaction_data(self,soup,view_state,cookies):
         print("Enter get_all_pages_soup function.....")
         url = "https://vahan.parivahan.gov.in/vahanservice/vahan/ui/eapplication/form_eAppCommonHomeLogin.xhtml"
         view_state = soup.find("input", {"id": "j_id1:javax.faces.ViewState:0"}).get("value")
@@ -172,3 +172,29 @@ class NavigationFlow:
             all_pages_soup.append(soup)
             last_page_no = soup.find_all('tr')[-1].find('td').get_text(strip=True)
         return all_pages_soup
+
+    def get_all_pages_soup(self,soup,view_state,cookies,upd_s_no):
+        print("Enter get_all_pages_soup function.....")
+        upd_s_no+=1
+        url = "https://vahan.parivahan.gov.in/vahanservice/vahan/ui/eapplication/form_eAppCommonHomeLogin.xhtml"
+        view_state = soup.find("input", {"id": "j_id1:javax.faces.ViewState:0"}).get("value")
+        pages = soup.find(class_='ui-paginator-pages').find_all('a')
+        last_page_no = soup.find(id='tabView:tableTax_data').find_all('tr')[-1].find('td').get_text(strip=True)
+        all_pages_soup = []
+        all_pages_soup.append(soup)
+        for _ in range(1,len(pages)):
+            if upd_s_no<=int(last_page_no):
+                break
+            header,payload=HeaderHelper.pagination_header(view_state,last_page_no)
+            res = self.session.post(url, data=payload, headers=header,cookies=cookies)
+            xml = res.text
+            match = re.search(r'<update id="j_id1:javax\.faces\.ViewState:0"><!\[CDATA\[(.*?)\]\]>',xml,re.S)
+            view_state = match.group(1)
+            time.sleep(0.1)
+            soup_xml = BeautifulSoup(res.text, "xml")
+            html_fragment = soup_xml.find("update", {"id": "tabView:tableTax"}).string
+            soup = BeautifulSoup(html_fragment, "html.parser")
+            all_pages_soup.append(soup)
+            last_page_no = soup.find_all('tr')[-1].find('td').get_text(strip=True)
+
+        return all_pages_soup,view_state

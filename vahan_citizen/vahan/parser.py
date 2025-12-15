@@ -80,8 +80,12 @@ class Extractor:
         form_29_exists_or_not = form_29_btn_id = None
         view_state = soup12.find("input", {"id": "j_id1:javax.faces.ViewState:0"})["value"]
         
-        try:form_29_btn_id = soup12.find_all(class_='ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only display-none')[2]['id']
-        except IndexError:form_29_exists_or_not = "form 29 is not available"
+        try:
+            form_29_btn_id = soup12.find_all(class_='ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only display-none')[2]['id']
+            if soup12.find_all(class_='ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only display-none')[2].get_text(strip=True)!="Print CMV form_29":
+                form_29_exists_or_not = "form 29 is not available"
+        except IndexError:
+            form_29_exists_or_not = "form 29 is not available"
         
         return form_29_btn_id, view_state,form_29_exists_or_not
 

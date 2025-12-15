@@ -53,7 +53,7 @@ class VahanScraper:
             print("Enter transaction_data function.....")
             soup,view_state = self.common.prepare_context(reg_no)
 
-            all_pages_soup = self.flow.get_all_pages_soup(soup,view_state,self.cookies)
+            all_pages_soup = self.flow.get_all_pages_soup_for_transaction_data(soup,view_state,self.cookies)
             transactions,all_tr_for_s_no = self.extract.get_all_transaction_data(all_pages_soup)
 
             return {"transactions": transactions}
@@ -67,7 +67,7 @@ class VahanScraper:
             upd_s_no=int(s_no)-1
 
             soup,view_state = self.common.prepare_context(reg_no)
-            all_pages_soup = self.flow.get_all_pages_soup(soup,view_state,self.cookies)
+            all_pages_soup,view_state = self.flow.get_all_pages_soup(soup,view_state,self.cookies,upd_s_no)
             transactions,all_tr_for_s_no = self.extract.get_all_transaction_data(all_pages_soup)
             dynamic_id, trans_id = self.extract.extract_receipt_button(all_tr_for_s_no,upd_s_no)
 
@@ -83,7 +83,7 @@ class VahanScraper:
             form_29_btn_id, view_state,form_29_exists_or_not = self.extract.extract_form_29_button(soup)
             if form_29_exists_or_not:
                 return {"applications": None, "message": "form 29 is not available"}
-            
+
             url="https://vahan.parivahan.gov.in/vahanservice/vahan/ui/eapplication/formFeeRecieptPrintReport.xhtml"
             soup = self.flow.get_form_29_data(url,view_state,form_29_btn_id,trans_id,self.cookies)
 

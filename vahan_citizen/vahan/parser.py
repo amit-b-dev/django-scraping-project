@@ -20,18 +20,25 @@ class Extractor:
         trans_id = all_tr_for_s_no[upd_s_no].find_all('td')[3].text
         return dynamic_id, trans_id
     
+
     def get_all_transaction_data(self, all_pages_soup):
-        transactions=[]
-        all_tr_for_s_no=[]
+        transactions = []
+        all_tr_for_s_no = []
+
         for soup in all_pages_soup:
             all_tr = soup.find_all('tr')
-            if len(all_tr)==16:
+
+            if len(all_tr) == 16:
                 all_tr.pop(0)
+
             for tr in all_tr:
                 all_tr_for_s_no.append(tr)
                 tds = tr.find_all("td")
+
                 if len(tds) < 7:
                     continue
+
+                trans_date_str = tds[5].text.strip()
 
                 transaction = {
                     "Sl No": tds[0].text.strip(),
@@ -39,16 +46,61 @@ class Extractor:
                     "Trans Desc": tds[2].text.strip(),
                     "Trans ID": tds[3].text.strip(),
                     "Trans Amt": tds[4].text.strip(),
-                    "Trans Date": tds[5].text.strip(),
-                    "Status": tds[6].text.strip()
+                    "Trans Date": trans_date_str,
+                    "Status": tds[6].text.strip(),
+                    # helper field for sorting
+                    "_trans_date_obj": datetime.strptime(
+                        trans_date_str, "%d-%b-%Y"
+                    )
                 }
-                if transaction["Trans Desc"]=="Transfer of Ownership" or "Transfer of Ownership" in transaction["Trans Desc"]:
+
+                if "Transfer of Ownership" in transaction["Trans Desc"]:
                     transaction["CMV form_29"] = "available"
                 else:
                     transaction["CMV form_29"] = "not available"
+
                 transactions.append(transaction)
+
+        transactions.sort(
+            key=lambda x: x["_trans_date_obj"],
+            reverse=True
+        )
+
+        # Remove helper key
+        for t in transactions:
+            t.pop("_trans_date_obj", None)
+
+        return transactions, all_tr_for_s_no
+
+    # def get_all_transaction_data(self, all_pages_soup):
+    #     transactions=[]
+    #     all_tr_for_s_no=[]
+    #     for soup in all_pages_soup:
+    #         all_tr = soup.find_all('tr')
+    #         if len(all_tr)==16:
+    #             all_tr.pop(0)
+    #         for tr in all_tr:
+    #             all_tr_for_s_no.append(tr)
+    #             tds = tr.find_all("td")
+    #             if len(tds) < 7:
+    #                 continue
+
+    #             transaction = {
+    #                 "Sl No": tds[0].text.strip(),
+    #                 "Regn No": tds[1].text.strip(),
+    #                 "Trans Desc": tds[2].text.strip(),
+    #                 "Trans ID": tds[3].text.strip(),
+    #                 "Trans Amt": tds[4].text.strip(),
+    #                 "Trans Date": tds[5].text.strip(),
+    #                 "Status": tds[6].text.strip()
+    #             }
+    #             if transaction["Trans Desc"]=="Transfer of Ownership" or "Transfer of Ownership" in transaction["Trans Desc"]:
+    #                 transaction["CMV form_29"] = "available"
+    #             else:
+    #                 transaction["CMV form_29"] = "not available"
+    #             transactions.append(transaction)
                 
-        return transactions,all_tr_for_s_no
+    #     return transactions,all_tr_for_s_no
 
     def get_all_transaction_data1(self, all_pages_soup):
         transactions=[]

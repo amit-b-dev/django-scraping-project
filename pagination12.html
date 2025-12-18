@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Karnataka One</title>
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="keywords" content="" />
+    <link href="/Content/bootstrap.min.css" rel="stylesheet"/>
+<link href="/Content/font-awesome.min.css" rel="stylesheet"/>
+<link href="/Content/style.min.css" rel="stylesheet"/>
+<link href="/Content/media.min.css" rel="stylesheet"/>
+<link href="/Content/ui.jqgrid-bootstrap.min.css" rel="stylesheet"/>
+<link href="/Content/toastr.min.css" rel="stylesheet"/>
+
+    <!--[if lt IE 9]>
+        <link href="Content/ie8-and-down.css" rel="stylesheet" />
+    <![endif]-->
+    <link rel="stylesheet" id="mainColorScheme" href="" />
+    <link href="/Content/enjoyhint.css" rel="stylesheet" />
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="/images/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/images/favicon.png" type="image/x-icon">
+    <!-- Favicon -->
+    <script src="/Scripts/jquery.min.js"></script>
+
+
+    <!--[if gte IE 9 | !IE ]><!-->
+    <script src="/Scripts/floating.js"></script>
+    <![endif]-->
+
+        <base href="/" />
+    <style>
+        label {
+            margin-bottom: 0 !important;
+            display: initial;
+        }
+        #startButton {
+            display: none;
+        }
+    </style>
+</head>
+
+
+<script type="text/javascript">
+    var objpay = {};
+    $(window).load(function () {
+        $(".bg_load").fadeOut("slow");
+    })
+
+    var userRole = '';
+    if ('KarnatakaOne.LoginUserDtlsModel' != null) {
+        userRole = 'PRT';
+    }
+
+    //$(document).ready(function () {
+    //    //  if (userRole == "PRT") {
+    //    $(document).ready(function () {
+    //        if ($("#lblCitySelected").text() == "Select City") {
+    //            ShowCityList();
+    //        }
+    //    });
+    //});
+    //Added For AntiForgerty Attribute
+    //Added For AntiForgerty Attribute
+    function ReloadServicePage() {
+        window.location.reload();
+    }
+
+    function OnlineTransactionConfirmation(obj) {
+
+        //alert("innerText:" + document.getElementById("AmountPaid").innerText)
+        //alert("Id:" + $("#AmountPaid").val())
+        //alert("Scope:" + objpay.AmountPaid)
+
+        if (objpay.AmtChkRequired) {
+            if (document.getElementById("AmountPaid").innerText != "") {
+                if (document.getElementById("AmountPaid").innerText != objpay.AmountPaid || $("#TotalBill").val() != objpay.TotalBill) {
+                    alert("Amount Mismatch")
+                    return false;
+                }
+            }
+            else {
+                if ($("#AmountPaid").val() != objpay.AmountPaid || $("#TotalBill").val() != objpay.TotalBill) {
+                    alert("Amount Mismatch")
+                    return false;
+                }
+
+            }
+
+        }
+        var UserDecleration = confirm("Do you want to Submit the transaction ?");
+        if (UserDecleration == true) {
+            if (objpay.AmtChkRequired) {
+                if (document.getElementById("AmountPaid").innerText != "") {
+                    if (document.getElementById("AmountPaid").innerText != objpay.AmountPaid || $("#TotalBill").val() != objpay.TotalBill) {
+                        alert("Amount Mismatch")
+                        return false;
+                    }
+                }
+                else {
+                    if ($("#AmountPaid").val() != objpay.AmountPaid || $("#TotalBill").val() != objpay.TotalBill) {
+                        alert("Amount Mismatch")
+                        return false;
+                    }
+
+                }
+            }
+            var el = document.getElementById('hideme');
+            el.style.display = 'none';
+
+            $("#PayTotalBill").val(objpay.TotalBill);
+            $("#PayDeptCharge").val(objpay.DeptCharge);
+            $("#PayUserCharge").val(objpay.UserCharge);
+            $("#PayChargePercentage").val(objpay.ChargePercentage);
+            $("#PayChargeValue").val(objpay.ChargeValue);
+            $("#PayAmountPaid").val(objpay.AmountPaid);
+            //$("#PayCardType").val(objpay.CardType);
+
+            return true;
+
+        }
+        else {
+            return false;
+        }
+    }
+</script>
+
+
+
+<body class="divContent">
+    
+    <input type="hidden" id="forgeryToken" value="24mIfUoUUV4UhvRy69XI7OhQK7E1sLw9vSluIuqF_tbjhMhgJHH0zHpIGiCCcvBHwRUl5aHl9AZsdlpEr_iM2IxM6l01,FvD-Pdn3PEXqHPzfDf0L90GuIn6Dqtvzww-GQ6d5xDUPddPb5-O8wbALZDVbIb6dEy1qccu7ieVZ_mF5gdnDlo8NfCE1" />
+    
+
+    <!-- end color switcher -->
+    
+    <span id="startButton" class="font-regular button">Guide Me</span>
+    <!-- header_top -->
+    <div class="top_bg">
+        <div class="container-fluid">
+            <div class="header_top">
+                <div class="top_right">
+                    <ul>
+                        <li><a class="divContent" href="callto:080-49203888"><i class="fa fa-phone"> </i>080-49203888/ 8904085030</a></li>
+                        <li>|</li>
+                        <li><a class="divContent" rel="noreferrer noopener" href="mailto:onehelpdesk@karnataka.gov.in" target="_blank"><i class="fa fa-envelope-o"> </i>ONEHELPDESK@KARNATAKA.GOV.IN</a></li>
+                    </ul>
+                </div>
+                <div class="top_left">
+                    <ul>
+
+                        <li class="user-name">
+                            <a class="divContent dropdown-toggle" data-toggle="dropdown" href="/Info/Public/%23">Hi Guest ▼</a>
+                        </li>|
+                              <li><a class="divContent" href="/#login"><label for="Sign_In">Sign In</label></a></li> 
+                        <li>|</li>
+                        
+                        <li><a class="divContent" id="linkDecrease" href="javascript:void(0)">-A</a></li>
+                        <li><a class="divContent" id="linkReset" href="javascript:void(0)">A</a></li>
+                        <li><a class="divContent" id="linkIncrease" href="javascript:void(0)">+A</a></li>
+                        <li>|</li>
+                            <li><a class="divContent" href="javascript:ChangeLanguage('Kn')">Kannada</a></li>
+                        <li>|</li>
+                        <li><a class="divContent" href="javascript:ShowCityList();" id="lblCitySelected" name="lblCitySelected"><div id="divCitySelected"></div></a></li>
+                        
+                    </ul>
+                </div>
+                <div id="switcher-wrapper" class="switch">
+                    <ul id="mainColors">
+                            <li class="color-0 active" data-path=""></li>
+                            <li class="color-2" data-path="Content/theme2.css"></li>
+                            <li class="color-5" data-path="Content/theme5.css"></li>
+                            <li class="color-6" data-path="Content/theme6.css"></li>
+                            <li class="color-7" data-path="Content/theme7.css"></li>
+                            <li class="color-10" data-path="Content/theme10.css"></li>
+
+
+                    </ul>
+                </div>
+                <div class="clearfix"> </div>
+            </div>
+        </div>
+    </div>
+    <!-- header -->
+    <div class="header_bg">
+        <div class="container-fluid pad">
+            <div class="header">
+                <div class="">
+                    <div class="logo">
+                            <a href="javascript:void(0)">
+                                <picture>
+                                    <source media="(min-width: 1600px)" srcset="/images/big-logo3.jpg">
+                                    <source media="(min-width: 1280px)" srcset="/images/big-logo2.jpg">
+                                    <img src="/images/big-logo.jpg" class="biglogo kOneLogo" alt="Karnataka One Portal" title="Karnataka One Portal" />
+                                </picture>
+                                <img src="/ProjectLogo/KarnatakaOneLogo.svg" id="ProjectLogo" class="cities-logo biglogo" alt="Karnataka  Cities" title="Karnataka Cities" />
+                            </a>
+                            <span class="mainlogo text-center"><a href="javascript:void(0)"><img src="/images/logo.png" alt="Karnataka One Portal" title="Karnataka One Portal" /></a></span>
+                    </div>
+                    <!-- start header_right -->
+
+                </div>
+                <!-- start header menu -->
+                <nav class="navbar navbar-default main-menu">
+                    <div class="container-fluid">
+                        <div class="navbar-header">
+                            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                            </button>
+                        </div>
+                        <div class="collapse navbar-collapse" id="myNavbar">
+                            <ul class="nav navbar-nav">
+
+                                <li class="grid"><a class="color1" href="/PortalHome">Home</a></li>
+
+                                <li class="dropdown">
+                                    <a class="dropdown-toggle color2" data-toggle="dropdown" href="#"> <label for="About_Us">About Us</label><span class="caret"></span></a>
+                                    <ul class="dropdown-menu">
+                                            <li><a href="/Info/Public/AboutBangaloreOne">About BangaloreOne</a></li>
+                                            <li><a href="/Info/Public/AboutKarnatakaOne">About KarnatakaOne</a></li>
+                                            <li><a href="/Info/Public/VisionAndMission">Vision &amp; Misssion</a></li>
+                                            <li><a href="/Info/Public/Objectives">Objectives</a></li>
+                                            <li><a href="/Info/Public/SalientFeatures">Salient Features</a></li>
+                                    </ul>
+                                </li>
+
+                                <li>
+                                    <a class="color4" href="/PortalHome">Services</a>
+                                </li>
+                                <li class="grid"><a class="color5" href="/Public/Services">Services Offered</a></li>
+                                <li class="grid"><a class="color8" href="/Public/OnlineServiceDetails">Online Services</a></li>
+
+
+                                
+                                
+                                
+                                
+                                
+                                <li class="dropdown">
+                                    
+                                    <div class="dropdown-menu">
+                                        <div class="col-sm-2">
+                                            <ul>
+                                                
+                                                <li><a href="/Info/Public/BangaloreOnePortal">Bengaluru</a></li>
+                                                <li><a href="/Info/Public/BelgaumOnePortal">Belgaum</a></li>
+                                                <li><a href="/Info/Public/BellaryOnePortal">Bellary</a></li>
+                                                <li><a href="/Info/Public/DavanagereOnePortal">Davanagere</a></li>
+                                                <li><a href="/Info/Public/HubliDharwadOnePortal">Hubli-Dharwad</a></li>
+                                            </ul>
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <ul>
+                                                <li><a href="/Info/Public/MysoreOnePortal">Mysore</a></li>
+                                                <li><a href="/Info/Public/MangaloreOnePortal">Mangalore</a></li>
+                                                <li><a href="/Info/Public/ShimogaOnePortal">Shimoga</a></li>
+                                                <li><a href="/Info/Public/TumkurOnePortal">Tumkur</a></li>
+                                                <li><a href="/Info/Public/GulbargaOnePortal">Gulbarga</a></li>
+                                                
+                                            </ul>
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <ul>
+                                                
+                                                <li><a href="/Info/Public/GadagOnePortal">Gadag</a></li>
+                                            </ul>
+                                        </div>
+                                        
+                                    </div>
+                                </li>
+                                
+                                <li class="dropdown">
+                                    <a class="dropdown-toggle color2" data-toggle="dropdown" href="#">Help<span class="caret"></span></a>
+                                    <ul class="dropdown-menu">
+                                        <li><a href="/Info/Public/Help">FAQ&#39;s</a></li>
+                                        <li><a href="/Info/Public/UserManual">User Manual</a></li>
+                                    </ul>
+                                </li>
+                                <li><a class="color11" href="/Info/Public/SiteMap">Site Map</a></li>
+                                <li><a class="color2" href="/ViewReceipt/ReceiptView">Get Your Receipt</a></li>
+                                <li><a class="color12" href="/Info/Public/ContactUs">Contact Us</a></li>
+                                
+                            </ul>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+        </div>
+        <!--[if lt IE 9]>
+            <div class="cap-msg text-center">This website is not supporting less then internet exproler 9</div>
+        <![endif]-->
+
+    </div>
+
+
+
+    
+
+<style>
+    .res-sec {
+        margin-top: 25px;
+        margin-bottom: 25px;
+    }
+
+    @media (max-width: 420px) {
+        .top_right {
+            display: block;
+            font-size: 20px;
+        }
+    }
+</style>
+
+<script type="text/javascript"> 
+
+    $(document).ready(function () {
+
+        document.getElementsByName("frmPoliceFineLogin")[0].onkeypress = function (e) {
+            var key = e.charCode || e.keyCode || 0;
+            if (key == 13) {
+                e.preventDefault();
+            }
+        }
+
+    });
+
+</script>
+<div class="payment-page res-sec container">
+    <h3 class="green row">Collection of Fine For Traffic Violation </h3>
+
+<form action="/PoliceCollectionOfFine/PoliceCollectionOfFineLogin" method="post" name="frmPoliceFineLogin" transaction="KarnatakaOnePortal.Models.PoliceCollectionOfFineViewModel"><input id="hdn_Mobile" name="Hidden_Mobile" type="hidden" value="" /><input id="hdn_RequestID" name="Hidden_RequestID" type="hidden" value="" /><input id="Hidden_ServiceID" name="Hidden_ServiceID" type="hidden" value="dUZnOGxNQzFCbEdIckVoQlNaZVV2UT09" /><input id="hdn_Flag" name="Hidden_Flag" type="hidden" value="u9B6paj17F3BDcPL5c0iag==" /><input id="hdn_OTPValid" name="Hidden_OTPValidation" type="hidden" value="Y" /><input name="__RequestVerificationToken" type="hidden" value="JqsM5g_lsd0CtC3DxAvPWF7iiWJYnUx00aauX8CCvuY0g5MFu08RPrb6pOXrPi-gbryTxGGiufpC1ryvTYUAJGNoWyw1" />        <div class="col-sm-9 no-left-padding">
+
+            <div id="Div_PoliceOTPPartial" style="margin-top: 30px;">
+                
+
+<div id="Div_MobileNoValidate">
+    <div class="row">
+        <div class='col-sm-3'>
+            <div class="form-group">
+                <input type="text" id="MobileNo" name="MobileNo" class="form-control numbers" minlength="10" maxlength="10" placeholder="Enter Mobile No" />
+                <label for="MobileNo" class="custom-label active"><font face="Arial" color="#ff0000" size="4">*</font>Mobile No</label>
+            </div>
+        </div>
+        <div class='col-sm-3'>
+            <div class="form-group">
+                <input type="button" id="SendOTP" value="Send OTP" class="btn btn-default" />
+            </div>
+        </div>
+        <div class='col-sm-3'>
+            <div class="form-group">
+                <input type="text" id="OTP" name="OTP" class="form-control numbers" minlength="4" maxlength="4" placeholder="Enter OTP" />
+                <label for="OTP" class="custom-label active"><font face="Arial" color="#ff0000" size="4">*</font>OTP</label>
+            </div>
+        </div>
+        <div class='col-sm-3'>
+            <div class="form-group">
+                <input type="button" id="ValidateOTP" value="Validate OTP" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class='col-sm-3'>
+            <div id="Div_lblMobileOTP" style="display: none;">
+                <span id="lblMobileOTP" style="font-weight:bold;color:green"></span>
+            </div>
+            <div id="Div_lblMobileErrorOTP" style="display: none;">
+                <span id="lblMobileErrorOTP" style="font-weight:bold;color:red"></span>
+            </div>
+        </div>
+        <div class='col-sm-4'>
+            <div class="form-group">
+                <span id="time" style="font-size:medium;font-weight:bold;color:red;"></span>
+            </div>
+        </div>
+        <div class='col-sm-3'>
+            <div id="Div_lblOTP" style="display: none;">
+                <span id="lblOTP" style="font-weight:bold;color:green"></span>
+            </div>
+            <div id="Div_lblErrorOTP" style="display: none;">
+                <span id="lblErrorOTP" style="font-weight:bold;color:red"></span>
+            </div>
+        </div>
+        <div class='col-sm-3'>
+            <button type="submit" id="btn_submit" style="display:none"></button>
+        </div>
+    </div>
+
+    <div id="Div_MaxErrorMsg" class="row alert alert-danger" style="margin:20px 0 20px 0;display:none">
+        <div class="col-md-12 text-center">
+            <strong id="MaxErrorMsg" class="text-danger" style="font-weight:bolder"></strong>
+        </div>
+    </div>
+
+
+</div>
+
+<script type="text/javascript">
+
+    var interval;
+
+    function Error_Alert(ErrorMsg) {
+
+        toastr.warning(ErrorMsg, 'Invalid Input',
+            {
+                "closeButton": true,
+                "positionClass": "toast-top-center",
+                "tapToDismiss": false,
+                "preventDuplicates": true,
+            });
+    }
+
+    $(document).ready(function () {
+
+        //Added for MobileNo OTP Validation Required or Not
+        if ($('#hdn_OTPValid').val() == 'N') {
+            $('#btn_submit').click();
+            return;
+        }
+
+        $('.numbers').keypress(function (e) {
+              if (String.fromCharCode(e.keyCode).match(/[^0-9]/g)) return false;
+        });
+
+        $('#OTP').prop('readonly', true);
+        $('#ValidateOTP').prop('disabled', true);
+
+        $("#SendOTP").click(function () {
+
+            if ($("#MobileNo").val() == "") {
+                Error_Alert("Please Enter Mobile No.");
+                return false;
+            }
+            else if ($("#MobileNo").val().length != 10) {
+                Error_Alert("Please Enter Valid Mobile No.");
+                return false;
+            }
+            else {
+
+                var regex = /^(0|91)?[6-9][0-9]{9}$/;
+                if (!regex.test($("#MobileNo").val())) {
+
+                    Error_Alert('Please Enter Valid Mobile No.');
+                    $('#MobileNo').val('');
+                    return;
+                }
+                else {
+
+                      $("#SendOTP").attr("disabled", true);                
+
+                  $(".masking").addClass("masking-visible");
+
+                    $.ajax({
+                      url: '/PoliceCollectionOfFine/SendOTP',
+                      type: 'GET',
+                      cache: false,
+                        data: { Mobile: $("#MobileNo").val(), Flag: $('#hdn_Flag').val()}
+                  }).success(function (result, status, xhr) {
+
+                      $(".masking").removeClass("masking-visible");
+
+                      if (result != "") {
+
+                          if (result.split("|")[0] == "Success") {
+
+                              $('#lblMobileOTP').html(result.split("|")[1]);
+
+                              $('#MobileNo').prop('readonly', true);
+                              $('#OTP').prop('readonly', false);
+
+                              $('#ValidateOTP').prop('disabled', false);
+
+                              $(".masking").removeClass("masking-visible");
+
+                              $('#Div_lblMobileOTP').show();
+                              $('#Div_lblMobileErrorOTP').hide();
+
+                              $('#hdn_RequestID').val(result.split("|")[2]);
+                              $('#hdn_Mobile').val(result.split("|")[3]);
+
+                              setTimeout(function () {
+                                  $("#SendOTP").attr("disabled", false);
+                              }, 60000);
+
+                              var counter = 60;
+                              interval = setInterval(function () {
+                                  counter--;
+                                  if (counter <= 0) {
+                                      clearInterval(interval);
+                                      $('#SendOTP').prop('value', 'Resend OTP');
+                                      $("#time").hide();
+                                      return;
+                                  }
+                                  else {
+                                      $("#time").show();
+                                      $('#time').text('Resend OTP in ' + counter + ' Seconds.');
+                                  }
+                              }, 1000);
+                          }
+                          else {
+
+                              if (result.split("|")[1] == "MAXOTP") {
+
+                                  $('#lblMobileOTP').html('');
+                                  $('#lblMobileErrorOTP').html('');
+
+                                  $('#Div_MaxErrorMsg').show();
+                                  $('#MaxErrorMsg').html(result.split("|")[2])
+
+                                  $('#Div_lblMobileOTP').hide();
+                                  $('#Div_lblMobileErrorOTP').show();
+
+                                  $('#MobileNo').prop('readonly', true);
+                                  $('#OTP').prop('readonly', true);
+
+                                  $('#SendOTP').attr("disabled", true);
+                                  $('#ValidateOTP').prop('disabled', true);
+
+                                  clearInterval(interval);
+                                  $("#time").hide();
+
+                              }
+                              else {
+
+                                  $('#lblMobileOTP').html('');
+                                  $('#lblMobileErrorOTP').html(result.split("|")[1]);
+
+                                  clearInterval(interval);
+                                  $("#time").hide();
+
+                                  $('#SendOTP').attr("disabled", false);
+                                  $('#SendOTP').prop('value', 'Send OTP');
+
+                                  $('#Div_lblMobileOTP').hide();
+                                  $('#Div_lblMobileErrorOTP').show();
+
+                              }
+                          }
+
+                          return;
+                      }
+
+                  }).error(function (xhr, status, error) {
+                      $(".masking").removeClass("masking-visible");
+                      if (xhr.responseJSON != undefined) { alert(xhr.responseJSON); }
+                  });
+
+                }
+
+            }
+
+        });
+
+        $("#ValidateOTP").click(function () {
+
+            debugger;
+
+             if ($("#MobileNo").val() == "") {
+                 Error_Alert("Please Enter Mobile No.");
+                 return false;
+            }
+            else if ($("#OTP").val() == "") {
+                 Error_Alert("Please enter OTP");
+                return false;
+             }
+             else if ($("#OTP").val().length != 4) {
+                 Error_Alert("Please Enter Valid OTP");
+                 return false;
+             }
+            else {
+
+                  $(".masking").addClass("masking-visible");
+
+                    $.ajax({
+                      url: '/PoliceCollectionOfFine/ValidateOTP',
+                      type: 'GET',
+                      cache: false,
+                        data: {
+                            Mobile: $("#MobileNo").val(), OTP: $("#OTP").val(),
+                            RequestID: $('#hdn_RequestID').val(), Flag: $('#hdn_Flag').val()
+                        }
+                  }).success(function (result, status, xhr) {
+
+                      $(".masking").removeClass("masking-visible");
+
+                      if (result != "") {
+
+                          if (result.split("|")[0] == "Success") {
+
+                              $('#lblOTP').html(result.split("|")[1]);
+                              $('#lblErrorOTP').html('');
+
+                              $('#Div_lblOTP').show();
+                              $('#Div_lblErrorOTP').hide();
+
+                              $('#MobileNo').prop('readonly', true);
+                              $('#OTP').prop('readonly', true);
+
+                              $("#SendOTP").prop("disabled", true);
+                              $("#ValidateOTP").prop("disabled", true);
+
+                              clearInterval(interval);
+                              $("#time").hide();
+
+                              $(".masking").addClass("masking-visible");
+
+                              $('#btn_submit').click();
+                          }
+                          else {
+
+                              $('#lblOTP').html('');
+                              $('#lblErrorOTP').html(result.split("|")[1]);
+
+                              $('#Div_lblOTP').hide();
+                              $('#Div_lblErrorOTP').show();
+                          }
+
+                          return;
+                      }
+
+                  }).error(function (xhr, status, error) {
+                      $(".masking").removeClass("masking-visible");
+                      if (xhr.responseJSON != undefined) { alert(xhr.responseJSON); }
+                  });
+
+            }
+
+        });
+
+    });
+
+</script>
+
+            </div>
+
+        </div>
+</form>
+
+</div>
+
+    <div class="footer">
+        <div class="container">
+            <div class="col-md-3 col-sm-12 cust">
+                <h4 class="divContent"><label for="KARNATAKA_ONE">KARNATAKA ONE</label></h4>
+                <p class="divContent"><label for="To_provide_a_single_interface_for_anytime_anywhere_citizen_centric_services_of_the_government_and_private_businesses_in_an_integrated_convenient__fair__effective__secure__sustainable_and_citizen_friendly">To provide a single interface for anytime anywhere citizen centric services of the government and private businesses in an integrated,convenient, fair, effective, secure, sustainable and citizen friendly</label>...</p>
+                <p class="font-regular"><a href="/Info/Public/VisionAndMission">Read More</a></p>
+            </div>
+            <div class="col-sm-3 col-xs-6 abt">
+                <h4 class="divContent"><label for="ABOUT_US">ABOUT US</label></h4>
+                <ul>
+                    
+                    <li><a class="divContent" href="/Public/Services">Services Offered</a></li>
+                    <li><a class="divContent" href="/Public/OnlineServiceDetails">Online Services</a></li>
+                    
+                    <li><a class="divContent" href="/Info/Public/ContactUs">Contact Us</a></li>
+                </ul>
+            </div>
+            <div class="col-sm-3 col-xs-6 myac">
+                <h4 class="divContent"><label for="OTHER_PAGES">OTHER PAGES</label></h4>
+                <ul>
+                    <li><a class="divContent" href="/Home/PortalUserRegistration/NEW">Sign Up</a></li>
+                    
+                    
+                    
+                    <li><a class="divContent" href="/Info/Public/Help">Help</a></li>
+                    
+                    <li><a class="divContent" href="/Info/Public/TermsAndConditions">Terms and Conditions </a></li>
+                    <li><a class="divContent" href="/Info/Public/WebsitePolicies">Website Policies</a></li>
+                </ul>
+            </div>
+            <div class="col-sm-3 col-xs-12 our-st">
+                <h4 class="divContent"><label for="Direct_Contact">Direct Contact</label> </h4>
+                <ul>
+                    <li class="divContent"><i class="fa fa-map-marker address" aria-hidden="true"></i><label for="Bangalore__Karnataka">Bangalore, Karnataka</label></li>
+                    <li class="divContent"><i class="fa fa-phone address" aria-hidden="true"></i>080-49203888/ 8904085030</li>
+                    <li class="divContent"><i class="fa fa-whatsapp address" aria-hidden="true"></i>8095892826</li>
+                    <li class="divContent"><a href="mailto:onehelpdesk@karnataka.gov.in" rel="noreferrer noopener" target="_blank"><i class="fa fa-envelope address" aria-hidden="true"></i>onehelpdesk@karnataka.gov.in</a></li>
+
+                    <li>
+                        <a href="https://www.facebook.com/pages/KarnatakaOne/903956589628082" class="social-icon" rel="noreferrer noopener" target="_blank"><i class="fa fa-facebook" aria-hidden="true"></i></a>
+                        <a href="https://twitter.com/KarnatakaOne" class="social-icon" rel="noreferrer noopener" target="_blank"><i class="fa fa-twitter" aria-hidden="true"></i></a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-end clearfix">
+            <div class="col-sm-12 no-lr-padding">
+                <div class="col-sm-9 col-xs-12"><p class="lef divContent" style="font-size: 13px;"><label for="This_website_belongs_to_Directorate_of_Electronic_Delivery_of_Citizen_Service__EDCS___DPAR__e-Governance___Government_of_Karnataka">This website belongs to Directorate of Electronic Delivery of Citizen Service (EDCS), DPAR (e-Governance), Government of Karnataka</label></p></div>
+                <div class="col-sm-3 col-xs-12">
+<a href="https://validator.w3.org/nu/?doc=https://www.karnatakaone.gov.in" target="_blank"><img src="/images/w3c.png" 
+alt="w3c"></a>
+                    <p class="rig divContent" style="font-size: 13px;">Empowered by:  <a target="_blank" rel="noreferrer noopener" href="http://www.cms.co.in/" class="font-regular"><img style="vertical-align: text-bottom;" src="/images/CMS-logo.png" /></a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <a href="javascript:" id="return-to-top"><i class="fa fa-arrow-up" aria-hidden="true"></i></a>
+    <div id="divCities">
+
+    </div>
+    <input id="hdnSelected" name="hdnSelected" type="hidden" value="" />
+    <script src="/Scripts/bootstrap.min.js"></script>
+<script src="/Scripts/main.min.js"></script>
+<script src="/Scripts/controller.min.js"></script>
+<script src="/Scripts/toastr.min.js"></script>
+
+    <script>
+
+        var $affectedElements = $(".divContent, p, li, span"); // Can be extended, ex. $("div, p, span.someClass")
+
+        // Storing the original size in a data attribute so size can be reset
+        $affectedElements.each(function () {
+            var $this = $(this);
+            $this.data("orig-size", $this.css("font-size"));
+        });
+
+        $("#linkIncrease").click(function () {
+            changeFontSize(1);
+        })
+
+        $("#linkDecrease").click(function () {
+            changeFontSize(-1);
+        })
+
+        $("#linkReset").click(function () {
+            $affectedElements.each(function () {
+                var $this = $(this);
+                $this.css("font-size", $this.data("orig-size"));
+            });
+        })
+
+        function changeFontSize(direction) {
+            $affectedElements.each(function () {
+                var $this = $(this);
+                $this.css("font-size", parseInt($this.css("font-size")) + direction);
+            });
+        }
+        function ShowCityList() {
+
+            $.ajax({
+                type: 'get',
+                url: '/PortalHome/ShowCityList',
+            }).success(function (result, xhr, status) {
+                $("#divCities").html(result)
+            }).error(function (xhr, status, error) {
+                $("#divCities").html("An error occurred")
+                if (xhr.responseJSON != undefined) { alert(xhr.responseJSON); }
+            })
+
+
+
+
+
+            // var CityListDiv = $('#divCities');
+
+            // CityListDiv.load('/PortalHome/ShowCityList', {}, function () { });
+        }
+        function ChangeLanguage(Lan) {
+            CreateCityCookie("kOneLanguage", Lan, 1000);
+            location.reload();
+        }
+        //$(document).ready(function () {
+        //    //  if (userRole == "PRT") {
+        //    $(document).ready(function () {
+        //        if ($("#lblCitySelected").text() == "Select City") {
+        //            ShowCityList();
+        //        }
+        //    });
+        //});
+
+        $(document).ready(function () {
+            var koneColor = ReadCookie('kOneColor');
+            var Base = ''
+            var Lan = 'En'
+            if (koneColor == null) {
+                CreateCityCookie("kOneColor", "", 30);
+                koneColor = "";
+            }
+
+            if (koneColor != "") {
+                $('#mainColorScheme').attr("href", $('#mainColors .' + koneColor + '').attr("data-path"));
+                $('#mainColors .' + koneColor + '').addClass("active").siblings().removeClass("active");
+            }
+
+            var selectedCity = $('#hdnSelected').val();
+            var CookieValue = "";
+            if (selectedCity.split('|')[3] == "D") {
+                CookieValue = selectedCity;
+                $('#hdnSelected').val(selectedCity);
+                // CreateCityCookie("KOneUserCity", CookieValue, 30);
+            }
+            else {
+                CookieValue = ReadCookie("KOneUserCity");
+ 		if (CookieValue != undefined && CookieValue != '') {
+                	if (CookieValue.split('|').length != 5) {
+                    		CookieValue = "BN|Bengaluru|Projectlogo/KarnatakaOneLogo.svg|D|ಬೆಂಗಳೂರು";
+                	}
+		}
+		else{
+			CookieValue = "BN|Bengaluru|Projectlogo/KarnatakaOneLogo.svg|D|ಬೆಂಗಳೂರು";
+		}
+            }
+            if (CookieValue != undefined) {
+                if (Lan == "Kn") {
+
+                    $('#divCitySelected').html(CookieValue.split('|')[4]);
+                }
+                else {
+                    $('#divCitySelected').html(CookieValue.split('|')[1]);
+                }
+            }
+
+
+            //alert(CookieValue.split('|')[1]);
+
+            if (CookieValue != undefined && CookieValue.split('|')[2] == "") {
+                if (Base == null || Base == "") {
+                    $("#ProjectLogo").attr("src", "/Projectlogo/KarnatakaOneLogo.svg");
+                }
+                else {
+                    $("#ProjectLogo").attr("src", "/" + Base + "/Projectlogo/KarnatakaOneLogo.svg");
+                }
+            }
+            else {
+                if (Base == null || Base == "") {
+                    $("#ProjectLogo").attr("src", "/" + CookieValue.split('|')[2]);
+                }
+                else {
+                    $("#ProjectLogo").attr("src", "/" + Base + "/" + CookieValue.split('|')[2]);
+                }
+            }
+            
+
+            // divCitySelected
+
+            if (userRole == "PRT") {
+                $(document).ready(function () {
+                    if ($("#divCitySelected").html() == "Select City" || $("#divCitySelected").html() == "ನಗರವನ್ನು ಆಯ್ಕೆ ಮಾಡಿ") {
+                        ShowCityList();
+                    }
+                });
+            }
+
+        });
+
+        function ReadCookie(name) {
+            var value = "; " + document.cookie;
+            var parts = value.split("; " + name + "=");
+            if (parts.length == 2) return parts.pop().split(";").shift();
+        }
+        function CreateCityCookie(name, value, days) {
+
+            if (days) {
+                var date = new Date();
+                date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                var expires = "; expires=" + date.toGMTString();
+            }
+            else var expires = "";
+            document.cookie = name + "=" + value + expires + "; path=/";
+        }
+        function LogOff() {
+            $.ajax({
+                type: 'GET',
+                url: '/PortalHome/LogOff',
+                // data: { id: mlaId },
+                cache: false,
+            }).success(function (result, status, xhr) {
+
+            }).error(function (xhr, status, error) {
+                if (xhr.responseJSON != undefined) { alert(xhr.responseJSON); }
+            });
+            //    success: function (result) {
+
+            //    }
+            //});
+        }
+
+
+        //for menu active
+        $(function () {
+            $('#myNavbar a').filter(function () { return this.href == location.href }).parents('li').addClass('active').siblings().removeClass('active')
+            $('#myNavbar a').click(function () {
+                $(this).parents('li').addClass('active').siblings().removeClass('active')
+            })
+        })
+    </script>
+    <div class="masking">
+        <div><img src="/images/cube.gif" /></div>
+        <div class="text-white title2">Please Wait...</div>
+    </div>
+</body>
+</html>

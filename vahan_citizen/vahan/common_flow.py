@@ -66,4 +66,4 @@ class CommonFlow:
         # Final Application Details
         soup, view_state = self.flow.show_details(view_state, solved, reg_no, self.cookies)
 
-        return soup, view_state
+        return soup, view_state,self.cookies

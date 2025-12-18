@@ -8,8 +8,8 @@ from datetime import datetime
 @api_view(['POST'])
 def hc_madras_data_by_cnr_no(request):
     try:
-        vehicle_no = request.data.get("vehicle_no")
-        if not vehicle_no:
+        cnr_no = request.data.get("cnr_no")
+        if not cnr_no:
             return Response({"status": "error", "message": "vehicle_no is required"}, status=400)
 
         max_retries = 3
@@ -18,7 +18,7 @@ def hc_madras_data_by_cnr_no(request):
             # Initialize scraper and use global driver
             scraper = hcMadras()
             # Open the target URL
-            response = scraper.timeline_data(vehicle_no)
+            response = scraper.cnr_no_wise_data(cnr_no)
 
             applications = response.get("applications", [])
             if applications:   # success → return immediately

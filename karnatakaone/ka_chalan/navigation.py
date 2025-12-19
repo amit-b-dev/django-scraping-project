@@ -30,9 +30,9 @@ class NavigationFlow:
 
         return res,cookies
     
-    def selectCity(self,cookies):
+    def selectCity(self,cookies,city_url):
         headers = HeaderHelper.selectCity_header()
-        res = self.session.get("https://www.karnatakaone.gov.in/PortalHome/Index/Bengaluru",headers=headers,cookies=cookies)
+        res = self.session.get(city_url,headers=headers,cookies=cookies)
         time.sleep(0.2)
         # cookies = self.session.cookies.get_dict()
         # soup=BeautifulSoup(res.text,"html.parser")

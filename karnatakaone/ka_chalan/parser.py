@@ -1,21 +1,29 @@
 from bs4 import BeautifulSoup
 from datetime import datetime
 import re,time, json
+from .cities_with_code import CityRtoList 
 
 class Extractor:
     def __init__(self, session):
         self.session = session
     
-    def setNewCookies(self,res):
+    def setNewCookies(self,res,reg_no):
+        city_name = CityRtoList.get_city_by_reg_no(reg_no)
         soup = BeautifulSoup(res.text,"html.parser")
-        onclick = soup.find(id="cities").find_all("li")[0].find("a")["onclick"]
+        all_li = soup.find(id="cities").find_all("li")
+        for li in all_li:
+            if city_name==li.get_text(strip=True):
+                a_tag=li.find('a')
+                break
+        city_url = "https://www.karnatakaone.gov.in"+a_tag['href']
+        onclick = a_tag["onclick"]
         value = re.search(r"SelectCity\('(.+?)'\)", onclick).group(1)
         mojibake = value.encode("utf-8").decode("latin-1")
         cookies = self.session.cookies.get_dict()
         cookies['kOneColor']=""
         cookies['KOneUserCity']=mojibake
 
-        return cookies
+        return cookies,city_url
     
     def makePoliceCollectionOfFine_url(self,res):
         soup=BeautifulSoup(res.text,"html.parser")
@@ -83,22 +91,29 @@ class Extractor:
         return params,Token
     
     def extractFromRes(self,res):
-        data = json.loads(res.text)
-        mainDict = data.get("PoliceFineDetailsList", [])
-        results = []
-        for item in mainDict:
-            results.append({
-                "notice_no": item.get("NoticeNo"),
-                "vehicle_no": item.get("RegistrationNo"),
-                "violation_date": item.get("ViolationDate"),
-                "violation_time": item.get("ViolationTime"),
-                "place": item.get("PointName"),
-                "offence": item.get("OffenceDescription"),
-                "fine_amount": item.get("FineAmount"),
-                "name": item.get("Name"),
-                "address": item.get("Address")
-            })
+        try:
+            data = json.loads(res.text)
+            if not data.get("Response", {}).get("ResponseVal"):
+                return {"message": "No chalan Details Found"}
 
-        print(results)
+            mainDict = data.get("PoliceFineDetailsList", [])
+            results = []
+            for item in mainDict:
+                results.append({
+                    "notice_no": item.get("NoticeNo"),
+                    "vehicle_no": item.get("RegistrationNo"),
+                    "violation_date": item.get("ViolationDate"),
+                    "violation_time": item.get("ViolationTime"),
+                    "place": item.get("PointName"),
+                    "offence": item.get("OffenceDescription"),
+                    "fine_amount": item.get("FineAmount"),
+                    "name": item.get("Name"),
+                    "address": item.get("Address")
+                })
 
-        return results
+            print(results)
+
+            return results
+        except Exception as e:
+            print("Error=",e)
+            

@@ -187,4 +187,14 @@ class Extractor:
             "buyer_parent":     Extractor.safe_get(b, 10),
             "buyer_address":    Extractor.safe_get(b, 11)
         }
+    
+    def get_Newest_Form29(self,transactions):
+        try:
+            for tr in transactions:
+                if "Transfer of Ownership" in tr["Trans Desc"]:
+                    s_no = int(tr["Sl No"])
+                    return s_no
+            return None
+        except:
+            return None
 

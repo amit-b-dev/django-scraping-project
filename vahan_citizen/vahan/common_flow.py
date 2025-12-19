@@ -11,7 +11,7 @@ class CommonFlow:
         self.flow = NavigationFlow(self.session)
 
 
-    def prepare_context(self, reg_no):
+    def prepare_context(self, reg_no,chasis_no):
 
         #   Load Home Page
         url_home = "https://vahan.parivahan.gov.in/vahanservice/vahan/ui/statevalidation/homepage.xhtml"
@@ -64,6 +64,6 @@ class CommonFlow:
 
 
         # Final Application Details
-        soup, view_state = self.flow.show_details(view_state, solved, reg_no, self.cookies)
+        soup, view_state = self.flow.show_details(view_state, solved, reg_no,chasis_no, self.cookies)
 
         return soup, view_state,self.cookies

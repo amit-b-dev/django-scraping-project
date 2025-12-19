@@ -272,7 +272,7 @@ class HeaderHelper:
         
         return header,payload
 
-    def click_on_show_details_fun(view_state, captcha_text,reg_no, chasis_no="12345"):
+    def click_on_show_details_fun(view_state, captcha_text,reg_no, chasis_no):
     
         header = {
             "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",

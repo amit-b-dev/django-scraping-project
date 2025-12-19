@@ -10,15 +10,15 @@ class KarnatakaoneChalan:
         self.extract = Extractor(self.session)
         self.flow = NavigationFlow(self.session)
 
-    def send_otp(self,mobile_no):
+    def send_otp(self,reg_no,mobile_no):
         try:
             cookies = self.flow.load_home_page(self.base_url)
             res,cookies = self.flow.guestLoginWithOutMob(cookies)
 
             res,cookies = self.flow.showCityList(cookies)
-            cookies = self.extract.setNewCookies(res)
+            cookies,city_url = self.extract.setNewCookies(res,reg_no)
 
-            res = self.flow.selectCity(cookies)
+            res = self.flow.selectCity(cookies,city_url)
 
             res = self.flow.serviceList(cookies)
             PoliceCollectionOfFine_url = self.extract.makePoliceCollectionOfFine_url(res)
@@ -30,7 +30,7 @@ class KarnatakaoneChalan:
 
             return {
                 "OTP": "",
-                "reg_no": "", 
+                "reg_no": reg_no, 
                 "PoliceCollectionOfFine_url": PoliceCollectionOfFine_url,
                 "params": params,
                 "nexttonext_requests": nexttonext_requests,
@@ -38,7 +38,11 @@ class KarnatakaoneChalan:
             }
         except:
             traceback.print_exc()
-            return {"applications":[]}
+            return {
+                "status": "error",
+                "message": "Failed to send OTP",
+                "data": []
+            }
 
     def verify_otp_and_fetch_chalan(self,reg_no,otp,PoliceCollectionOfFine_url,params,nexttonext_requests,cookies):
         try:
@@ -46,6 +50,8 @@ class KarnatakaoneChalan:
             nexttonext_requests["otp"]=otp
 
             res = self.flow.validateOTP(cookies,PoliceCollectionOfFine_url,params)
+            if "Failed|InCorrect OTP" in res.text or "Failed|OTP is Expired" in res.text:
+                return {"applications": [], "message": "Please Enter Correct OTP"}
             res = self.flow.policeFineDetailsPage(cookies,PoliceCollectionOfFine_url,nexttonext_requests)
             params,Token = self.extract.extractParameterForGetChalan(res,reg_no)
 

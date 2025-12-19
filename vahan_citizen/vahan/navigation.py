@@ -121,9 +121,9 @@ class NavigationFlow:
 
         return view_state, captcha_text
 
-    def show_details(self, view_state, captcha_text, reg_no, cookies):
+    def show_details(self, view_state, captcha_text, reg_no, chasis_no, cookies):
         # print("Enter show details function.....")
-        header,payload=HeaderHelper.click_on_show_details_fun(view_state,captcha_text,reg_no)
+        header,payload=HeaderHelper.click_on_show_details_fun(view_state,captcha_text,reg_no,chasis_no)
         url = "https://vahan.parivahan.gov.in/vahanservice/vahan/ui/eapplication/form_eAppCommonHomeLogin.xhtml"
         r11 = self.session.post(url, data=payload, headers=header,cookies=cookies)
         time.sleep(0.1)

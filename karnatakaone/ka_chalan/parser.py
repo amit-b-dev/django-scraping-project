@@ -7,8 +7,8 @@ class Extractor:
     def __init__(self, session):
         self.session = session
     
-    def setNewCookies(self,res,reg_no):
-        city_name = CityRtoList.get_city_by_reg_no(reg_no)
+    def setNewCookies(self,res,vehicle_no):
+        city_name = CityRtoList.get_city_by_vehicle_no(vehicle_no)
         soup = BeautifulSoup(res.text,"html.parser")
         all_li = soup.find(id="cities").find_all("li")
         for li in all_li:
@@ -64,7 +64,7 @@ class Extractor:
         }
         return params,nexttonext_requests
     
-    def extractParameterForGetChalan(self,res,reg_no):
+    def extractParameterForGetChalan(self,res,vehicle_no):
         soup=BeautifulSoup(res.text,"html.parser")
         Token =  soup.find("input",{"name":"__RequestVerificationToken"})["value"]
         params = {
@@ -73,7 +73,7 @@ class Extractor:
             "DuplicateCheckRequired": "Y",
             "FetchType": "APICALL",
             "SearchBy": "REGNO",
-            "SearchValue": reg_no,
+            "SearchValue": vehicle_no,
             "ServiceCode": "BPS",
         }
         # nexttonext_requests={

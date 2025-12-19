@@ -5,38 +5,12 @@ from rest_framework.decorators import api_view
 import time
 from datetime import datetime
 
-# @api_view(['POST'])
-# def send_otp_api(request):
-#     try:
-#         reg_no = request.data.get("reg_no")
-#         mobile_no = request.data.get("mobile_no")
-#         if not reg_no or not mobile_no:
-#             return Response(
-#                 {"status": "error", "message": "mobile_no is required"},
-#                 status=400
-#             )
-
-#         scraper = KarnatakaoneChalan()
-#         response = scraper.send_otp(reg_no,mobile_no)
-
-#         if response.get("status") == "error":
-#             return Response(response, status=400)
-
-#         return Response(response, status=200)
-
-#     except Exception as e:
-#         logger.error("Send OTP error", exc_info=True)
-#         return Response(
-#             {"status": "error", "message": "Internal server error"},
-#             status=500
-#         )
-
 @api_view(['POST'])
 def send_otp_api(request):
     try:
-        reg_no = request.data.get("reg_no")
+        vehicle_no = request.data.get("vehicle_no")
         mobile_no = request.data.get("mobile_no")
-        if not reg_no or not mobile_no:
+        if not vehicle_no or not mobile_no:
             return Response(
                 {"status": "error", "message": "mobile_no and reg no is required"},
                 status=400
@@ -47,8 +21,8 @@ def send_otp_api(request):
 
             scraper = KarnatakaoneChalan()
 
-            response = scraper.send_otp(reg_no,mobile_no)
-            if response.get("reg_no"):
+            response = scraper.send_otp(vehicle_no,mobile_no)
+            if response.get("vehicle_no"):
                 return Response(response, status=200)
 
             if response.get("status") == "error":
@@ -69,14 +43,14 @@ def send_otp_api(request):
 @api_view(['POST'])
 def validate_api(request):
     try:
-        reg_no = request.data.get("reg_no")
+        vehicle_no = request.data.get("vehicle_no")
         otp = request.data.get("OTP")
         PoliceCollectionOfFine_url = request.data.get("PoliceCollectionOfFine_url")
         nexttonext_requests = request.data.get("nexttonext_requests")
         params = request.data.get("params")
         cookies = request.data.get("cookies")
 
-        if not all([reg_no, otp, PoliceCollectionOfFine_url, nexttonext_requests,params, cookies]):
+        if not all([vehicle_no, otp, PoliceCollectionOfFine_url, nexttonext_requests,params, cookies]):
             return Response({"status": "error", "message": "fields are required"}, status=400)
 
         max_retries = 3
@@ -86,7 +60,7 @@ def validate_api(request):
             scraper = KarnatakaoneChalan()
 
             response = scraper.verify_otp_and_fetch_chalan(
-                reg_no=reg_no,
+                vehicle_no=vehicle_no,
                 otp=otp,
                 PoliceCollectionOfFine_url=PoliceCollectionOfFine_url,
                 nexttonext_requests=nexttonext_requests,
@@ -122,8 +96,8 @@ def validate_api(request):
 
 # def karnatakaOneChalanByRegNo(request):
 #     try:
-#         reg_no = request.data.get("reg_no")
-#         if not reg_no:
+#         vehicle_no = request.data.get("vehicle_no")
+#         if not vehicle_no:
 #             return Response({"status": "error", "message": "vehicle_no is required"}, status=400)
 
 #         max_retries = 3
@@ -132,7 +106,7 @@ def validate_api(request):
 #             # Initialize scraper and use global driver
 #             scraper = KarnatakaoneChalan()
 #             # Open the target URL
-#             response = scraper.reg_no_wise_chalan_data(reg_no)
+#             response = scraper.vehicle_no_wise_chalan_data(vehicle_no)
 
             # applications = response.get("applications", [])
             # if applications:   # success → return immediately

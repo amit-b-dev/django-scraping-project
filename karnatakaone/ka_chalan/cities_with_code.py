@@ -171,8 +171,8 @@ class CityRtoList:
         }
     ]
     @classmethod
-    def get_city_by_reg_no(cls,reg_no: str):
-        rto = reg_no.replace("-", "").upper()[:4]
+    def get_city_by_vehicle_no(cls,vehicle_no: str):
+        rto = vehicle_no.replace("-", "").upper()[:4]
 
         for item in cls.city_rto_list:
             if rto in item["rto_codes"]:

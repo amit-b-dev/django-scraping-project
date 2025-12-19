@@ -10,13 +10,13 @@ class KarnatakaoneChalan:
         self.extract = Extractor(self.session)
         self.flow = NavigationFlow(self.session)
 
-    def send_otp(self,reg_no,mobile_no):
+    def send_otp(self,vehicle_no,mobile_no):
         try:
             cookies = self.flow.load_home_page(self.base_url)
             res,cookies = self.flow.guestLoginWithOutMob(cookies)
 
             res,cookies = self.flow.showCityList(cookies)
-            cookies,city_url = self.extract.setNewCookies(res,reg_no)
+            cookies,city_url = self.extract.setNewCookies(res,vehicle_no)
 
             res = self.flow.selectCity(cookies,city_url)
 
@@ -30,7 +30,7 @@ class KarnatakaoneChalan:
 
             return {
                 "OTP": "",
-                "reg_no": reg_no, 
+                "vehicle_no": vehicle_no, 
                 "PoliceCollectionOfFine_url": PoliceCollectionOfFine_url,
                 "params": params,
                 "nexttonext_requests": nexttonext_requests,
@@ -44,7 +44,7 @@ class KarnatakaoneChalan:
                 "data": []
             }
 
-    def verify_otp_and_fetch_chalan(self,reg_no,otp,PoliceCollectionOfFine_url,params,nexttonext_requests,cookies):
+    def verify_otp_and_fetch_chalan(self,vehicle_no,otp,PoliceCollectionOfFine_url,params,nexttonext_requests,cookies):
         try:
             params["OTP"]=otp
             nexttonext_requests["otp"]=otp
@@ -53,7 +53,7 @@ class KarnatakaoneChalan:
             if "Failed|InCorrect OTP" in res.text or "Failed|OTP is Expired" in res.text:
                 return {"applications": [], "message": "Please Enter Correct OTP"}
             res = self.flow.policeFineDetailsPage(cookies,PoliceCollectionOfFine_url,nexttonext_requests)
-            params,Token = self.extract.extractParameterForGetChalan(res,reg_no)
+            params,Token = self.extract.extractParameterForGetChalan(res,vehicle_no)
 
             res = self.flow.getAllChalanDetails(cookies,params,Token)
             data = self.extract.extractFromRes(res)

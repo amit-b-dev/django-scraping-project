@@ -152,6 +152,13 @@ class NavigationFlow:
         r15 = self.session.post(url, data=payload, headers=header,cookies=cookies)
         time.sleep(0.1)
         soup = BeautifulSoup(r15.text, "html.parser")
+        for _ in range(10):
+            b = [tag.get_text(strip=True).replace("\xa0", " ") for tag in soup.find_all("b")]
+            if not b:
+                r15 = self.session.post(url, data=payload, headers=header,cookies=cookies)
+                time.sleep(0.1)
+                soup = BeautifulSoup(r15.text, "html.parser")
+            break
         return soup
     
     def get_all_pages_soup_for_transaction_data(self,soup,view_state,cookies):

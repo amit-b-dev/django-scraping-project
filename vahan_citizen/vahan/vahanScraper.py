@@ -126,7 +126,6 @@ class VahanScraper:
 
             url="https://vahan.parivahan.gov.in/vahanservice/vahan/ui/eapplication/formFeeRecieptPrintReport.xhtml"
             soup = self.flow.get_form_29_data(url,view_state,form_29_btn_id,trans_id,cookies)
-
             # Extract form 29
             data = self.extract.extract_form29(soup)
 

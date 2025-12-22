@@ -1,11 +1,13 @@
+import base64
 import os
+import time
 
 from bs4 import BeautifulSoup
 from .headers import HeaderHelper
 from .captcha import CaptchaSolver
 
 
-class CommonFlow:
+class CodeFlow:
 
     def __init__(self, session):
         self.session = session
@@ -33,11 +35,28 @@ class CommonFlow:
             soup = BeautifulSoup(res.text, "html.parser")
             error_div = soup.find("div", class_="commentform").get_text(strip=True)
             if error_div=='Captcha not matching':
+                print('captcha incorrect retry again......')
                 continue
             if os.path.exists(captcha_path):
                 os.remove(captcha_path)
             if os.path.isdir(captcha_dir):
                 os.rmdir(captcha_dir)
             break
+            
 
         return res
+    
+    def get_Base64_Encoded_Pdf(self,value_id,cookies):
+        url="https://hcmadras.tn.gov.in/order_view.php"
+        headers,payloads = HeaderHelper.getPDF_Header(value_id)
+        res = self.session.post(url, headers=headers,data=payloads, cookies=cookies)
+
+        # with open("pdf1.pdf", "wb") as f:
+        #     f.write(res.content)
+
+        # time.sleep(0.2)
+        # with open("pdf2.pdf", "rb") as f:
+        #     base64_pdf = base64.b64encode(f.read()).decode()
+
+        base64_pdf = base64.b64encode(res.content).decode()
+        return base64_pdf

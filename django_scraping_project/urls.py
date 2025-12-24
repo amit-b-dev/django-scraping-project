@@ -21,7 +21,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     # path('api/', include('vahan_citizen.urls')),
     # path('api/', include('e_court_services.urls')),
-    path('api/', include('hc_madras.urls'))
+    # path('api/', include('hc_madras.urls'))
     # path('api/', include('karnatakaone.urls'))
+    path('api/', include('telangana_challan.urls'))
 
 ]

@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     'vahan_citizen',
     'e_court_services',
     'hc_madras',
+    'karnatakaone',
+    'telangana_challan'
 ]
 
 MIDDLEWARE = [

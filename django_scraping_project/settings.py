@@ -42,7 +42,10 @@ INSTALLED_APPS = [
     'e_court_services',
     'hc_madras',
     'karnatakaone',
-    'telangana_challan'
+    'telangana_challan',
+    'mp_challan',
+    'jharkhand_challan',
+    'gujrat_high_court'
 ]
 
 MIDDLEWARE = [

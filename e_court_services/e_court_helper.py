@@ -45,7 +45,7 @@ class e_court_services:
 
     def google_ocr(self,base64_image):
     
-        api_key = "AIzaSyDCNRpug2TxiTP407h3frQH0GUH3LkFVoE"
+        api_key = "AIzaSyDCNRpug2TxiTP407h3frQH0GUH3asaaddfs"
 
         # Remove the "data:image/jpeg;base64," prefix if present
         if base64_image.startswith("data:image"):
@@ -173,7 +173,7 @@ class e_court_services:
             traceback.print_exc()
             print("pdf issue")
 
-    def get_case_history_status(self,r,tree,Order_Date,Court_Number,app_token1,srno):
+    def get_case_history_status(self,r,tree,Order_Date,Court_Number,app_token,srno):
         try:
             a_tag = tree.xpath("//a[@class='fw-bold text-underline text-success fst-italic']")
             parts=re.search(r"display_case_acknowlegement\('([^']+)'", a_tag[0].xpath("./@onclick")[0]).group(1).split('&')
@@ -193,12 +193,13 @@ class e_court_services:
                 "search_by": "cnr",
                 "srno": srno,
                 "ajax_req": "true",
-                "app_token": app_token1
+                "app_token": app_token
             }
 
             headers = {
                 "X-Requested-With": "XMLHttpRequest",
                 "User-Agent": "Mozilla/5.0",
+                "Host":"services.ecourts.gov.in",
                 "Referer": "https://services.ecourts.gov.in/",
                 "Origin": "https://services.ecourts.gov.in",
                 "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"

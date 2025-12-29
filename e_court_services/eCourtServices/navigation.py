@@ -34,6 +34,11 @@ class NavigationFlow:
         img_url = "https://services.ecourts.gov.in/" + img_path
         res = self.session.get(img_url, headers=headers)
         captcha_text,captcha_path,captcha_dir = self.solver.solve(res)
+        if os.path.exists(captcha_path):
+            os.remove(captcha_path)
+        if os.path.isdir(captcha_dir):
+            os.rmdir(captcha_dir)
+
 
         return app_token,captcha_text
     

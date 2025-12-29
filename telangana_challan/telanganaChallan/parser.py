@@ -8,6 +8,9 @@ class Extractor:
     
     def extractChallanDetails(self,res):
         try:
+            if "NoPendingChallans" in res.text:
+
+                return "No Pending Challans"
             soup = BeautifulSoup(res.text,"html.parser")
             all_rows = soup.find(id='rtable').find_all('tr')
             tableData = []

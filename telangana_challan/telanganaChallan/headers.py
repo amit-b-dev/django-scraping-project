@@ -64,7 +64,7 @@ class HeaderHelper:
         }
         return headers,params
     
-    def captchaSolverAndFetchChallanDetails_header(captcha_text,csrf_token):
+    def captchaSolverAndFetchChallanDetails_header(vehicle_no,captcha_text,csrf_token):
 
         headers = {
             "Accept": "*/*",
@@ -84,7 +84,7 @@ class HeaderHelper:
         }
         payload = {
             "ctrl": "tab1",
-            "obj": "TS09EB4835",          # vehicle number
+            "obj": vehicle_no,          # vehicle number
             "obj1": "",  # user-entered captcha
             "put": captcha_text,
             "_csrfToeknVehNo": csrf_token

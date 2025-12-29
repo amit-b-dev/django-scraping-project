@@ -12,12 +12,12 @@ class TelanganaChalan:
 
     def getChallanDetails(self,vehicle_no):
         try:
-            res, cookies = self.flow.loadHomePage(vehicle_no)
+            res, cookies = self.flow.loadHomePage()
             res = self.flow.loadWelcomeJsp(cookies)
             for _ in range(10):
                 res,csrf_token = self.flow.loadCaptcha(cookies)
                 res = self.flow.getCaptchaImage(cookies,csrf_token)
-                res = self.flow.captchaSolverAndFetchChallanDetails(cookies,res,csrf_token)
+                res = self.flow.captchaSolverAndFetchChallanDetails(vehicle_no,cookies,res,csrf_token)
                 if res.text == "Invalid Captcha":
                     print('captcha is invalid! retry captcha....')
                     continue

@@ -10,7 +10,7 @@ class NavigationFlow:
         self.session = session
         self.solver = CaptchaSolver()
     
-    def loadHomePage(self, url):
+    def loadHomePage(self):
         url="https://echallan.tspolice.gov.in/publicview/"
         res = self.session.get(url)
         time.sleep(0.2)
@@ -43,9 +43,9 @@ class NavigationFlow:
 
         return res
     
-    def captchaSolverAndFetchChallanDetails(self,cookies,res,csrf_token):
+    def captchaSolverAndFetchChallanDetails(self,vehicle_no,cookies,res,csrf_token):
         captcha_text,captcha_path,captcha_dir = self.solver.solve(res)
-        headers,payloads = HeaderHelper.captchaSolverAndFetchChallanDetails_header(captcha_text,csrf_token)
+        headers,payloads = HeaderHelper.captchaSolverAndFetchChallanDetails_header(vehicle_no,captcha_text,csrf_token)
         url="https://echallan.tspolice.gov.in/publicview/PendingChallans.do"
         res = self.session.post(url,data=payloads,headers=headers,cookies=cookies)
         if res.text != "Invalid Captcha":

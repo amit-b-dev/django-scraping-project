@@ -8,8 +8,8 @@ from datetime import datetime
 @api_view(['POST'])
 def highCourt_API(request):
     try:
-        vehicle_no = request.data.get("vehicle_no")
-        if not vehicle_no:
+        Case_No = request.data.get("Case_No")
+        if not Case_No:
             return Response(
                 {"status": "error", "message": "mobile_no and reg no is required"},
                 status=400
@@ -20,7 +20,7 @@ def highCourt_API(request):
 
             scraper = MPChallan()
 
-            response = scraper.getCaseDetails(vehicle_no)
+            response = scraper.getCaseDetails(Case_No)
             applications = response.get("applications", [])
             if applications:   # success → return immediately
                 return Response({

@@ -1,6 +1,6 @@
 from django.urls import path
-from .high_court.highCourt_Scrape import hc_madras_data_by_cnr_no
+from .high_court.highCourt_Scrape import highCourt_API
 
 urlpatterns = [
-    path('v1/hc-madras/cases/cnr_no', hc_madras_data_by_cnr_no, name="hc_madras_data_by_cnr_no"),
+    path('v1/hc-gujrat/cases/case-no', highCourt_API, name="highCourt_API"),
 ]

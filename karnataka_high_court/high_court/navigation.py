@@ -11,7 +11,7 @@ class NavigationFlow:
         self.solver = CaptchaSolver()
     
     def loadHomePage(self):
-        url = "https://gujarathc-casestatus.nic.in/gujarathc/"
+        url = "https://judiciary.karnataka.gov.in/rep_judgmentcasebc.php"
         res = self.session.get(url)
         time.sleep(0.2)
         # soup = BeautifulSoup(res.text, "html.parser")
@@ -21,7 +21,7 @@ class NavigationFlow:
     
     def getCaptchaImageAndSolver(self,cookies,res):
         headers,params = HeaderHelper.getCaptchaImage_header()
-        url="https://gujarathc-casestatus.nic.in/gujarathc/CaptchaServlet"
+        url="https://judiciary.karnataka.gov.in/captcha.php"
         res = self.session.get(url,headers=headers, params=params, cookies=cookies)
         captcha_text,captcha_path,captcha_dir = self.solver.solve(res)
         print("captcha_text=",captcha_text)
@@ -34,15 +34,10 @@ class NavigationFlow:
 
         return captcha_text,captcha_path,captcha_dir
     
-    def verifyAndGetChallanDetails(self,cookies, case_no, captcha_text, captcha_path, captcha_dir):
-        caseMode="R"
-        caseType="1"
-        year="1994"
-        ccin = caseMode+"#"+caseType+"#"+case_no+"#"+year
-        headers,payload = HeaderHelper.verifyAndGetChallanDetails_header(case_no, captcha_text,ccin)
-
-        res = self.session.post("https://gujarathc-casestatus.nic.in/gujarathc/GetData", headers=headers,data=payload, cookies=cookies)
-        if "Invalid Captcha" not in res.text:
+    def verifyAndGetChallanDetails(self,cookies, bench_code, case_code, case_no,case_year, captcha_text, captcha_path, captcha_dir):
+        headers,payload = HeaderHelper.verifyAndGetChallanDetails_header(bench_code, case_code, case_no, case_year, captcha_text)
+        res = self.session.post("https://judiciary.karnataka.gov.in/rep_judgment_detailscasebc.php", headers=headers,data=payload, cookies=cookies)
+        if res.text!="2":
             if os.path.exists(captcha_path):
                 os.remove(captcha_path)
             if os.path.isdir(captcha_dir):

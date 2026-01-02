@@ -26,6 +26,8 @@ urlpatterns = [
     path('api/', include('telangana_challan.urls')),
     path('api/', include('mp_challan.urls')),
     path('api/', include('jharkhand_challan.urls')),
-    # path('api/', include('gujrat_high_court.urls'))
+    path('api/', include('gujrat_high_court.urls')),
+    path('api/', include('bombay_high_court.urls')),
+    path('api/', include('karnataka_high_court.urls'))
 
 ]

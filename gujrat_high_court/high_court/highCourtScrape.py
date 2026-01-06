@@ -2,7 +2,7 @@ import requests,traceback,re
 from .parser import Extractor
 from .navigation import NavigationFlow
 
-class MPChallan:
+class GujratHighCourt:
     def __init__(self):
         self.session = requests.Session()
         self.extract = Extractor(self.session)
@@ -21,9 +21,9 @@ class MPChallan:
                     continue
                 print('captcha crack')
                 break
-            chalan_details = self.extract.fetchChallanDetails(res)
+            case_details = self.extract.fetchChallanDetails(res)
             
-            return {"applications":chalan_details}
+            return {"applications":case_details}
 
         except:
             traceback.print_exc()

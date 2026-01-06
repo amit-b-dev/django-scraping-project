@@ -8,19 +8,21 @@ from datetime import datetime
 @api_view(['POST'])
 def highCourt_API(request):
     try:
-        Case_No = request.data.get("Case_No")
-        if not Case_No:
+        case_type = request.data.get("Case_Type")
+        case_no = request.data.get("Case_No")
+        case_year = request.data.get("Case_Year")
+        if not any([case_type,case_no,case_year]):
             return Response(
-                {"status": "error", "message": "mobile_no and reg no is required"},
+                {"status": "error", "message": "All fields must be provided"},
                 status=400
             )
         max_retries = 3
         retry_delay = 1
         for attempt in range(max_retries):
 
-            scraper = GujratHighCourt()
+            scraper = HcDelhi()
 
-            response = scraper.getCaseDetails(Case_No)
+            response = scraper.getCaseDetails(case_type, case_no, case_year)
             applications = response.get("applications", [])
             if applications:   # success → return immediately
                 return Response({

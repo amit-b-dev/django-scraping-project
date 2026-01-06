@@ -47,7 +47,10 @@ INSTALLED_APPS = [
     'jharkhand_challan',
     'gujrat_high_court',
     'bombay_high_court',
-    'karnataka_high_court'
+    'karnataka_high_court',
+    'delhi_high_court',
+    'madras_hc_judgements',
+    'madras_madurai_bench_judgements'
 ]
 
 MIDDLEWARE = [

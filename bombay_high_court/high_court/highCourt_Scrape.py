@@ -18,9 +18,9 @@ def highCourt_API(request):
         retry_delay = 1
         for attempt in range(max_retries):
 
-            scraper = MPChallan()
+            scraper = HcBombay()
 
-            response = scraper.getCaseDetails(Case_No)
+            response = scraper.getCaseDetailsByCaseNo(Case_No)
             applications = response.get("applications", [])
             if applications:   # success → return immediately
                 return Response({

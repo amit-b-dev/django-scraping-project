@@ -8,10 +8,10 @@ from datetime import datetime
 @api_view(['POST'])
 def highCourt_API(request):
     try:
-        bench_name = request.data.get("bench_name")
-        case_type = request.data.get("case_type")
-        case_no = request.data.get("case_no")
-        case_year = request.data.get("case_year")
+        bench_name = request.data.get("Bench_Name")
+        case_type = request.data.get("Case_Type")
+        case_no = request.data.get("Case_No")
+        case_year = request.data.get("Case_Year")
         if not any([bench_name,case_type,case_no,case_year]):
             return Response(
                 {"status": "error", "message": "All fields must be provided"},
@@ -21,7 +21,7 @@ def highCourt_API(request):
         retry_delay = 1
         for attempt in range(max_retries):
 
-            scraper = MPChallan()
+            scraper = KarnatakaHighCourtJudgements()
 
             response = scraper.getCaseDetails(bench_name, case_type, case_no, case_year)
             applications = response.get("applications", [])

@@ -2,13 +2,13 @@ import requests,traceback,re
 from .parser import Extractor
 from .navigation import NavigationFlow
 
-class MPChallan:
+class HcBombay:
     def __init__(self):
         self.session = requests.Session()
         self.extract = Extractor(self.session)
         self.flow = NavigationFlow(self.session)
 
-    def getCaseDetails(self,Case_No):
+    def getCaseDetailsByCaseNo(self,Case_No):
         try:
             for _ in range(10):
                 res, cookies = self.flow.loadHomePage()

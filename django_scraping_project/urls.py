@@ -28,6 +28,9 @@ urlpatterns = [
     path('api/', include('jharkhand_challan.urls')),
     path('api/', include('gujrat_high_court.urls')),
     path('api/', include('bombay_high_court.urls')),
-    path('api/', include('karnataka_high_court.urls'))
+    path('api/', include('karnataka_high_court.urls')),
+    path('api/', include('delhi_high_court.urls')),
+    path('api/', include('madras_hc_judgements.urls')),
+    path('api/', include('madras_madurai_bench_judgements.urls')),
 
 ]

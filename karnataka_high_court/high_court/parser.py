@@ -16,7 +16,7 @@ class Extractor:
         for opt in options:
             if opt.get_text(strip=True).lower() == bench_name_norm:
                 bench_value = opt.get("value")
-                return bech_value
+                return bench_value
         return None
 
     def get_case_type(self, soup, case_type: str):

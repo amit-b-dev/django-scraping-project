@@ -8,10 +8,13 @@ from datetime import datetime
 @api_view(['POST'])
 def highCourt_API(request):
     try:
-        Case_No = request.data.get("Case_No")
-        if not Case_No:
+        case_mode = request.data.get("Case_Mode")
+        case_type = request.data.get("case_type")
+        case_no = request.data.get("Case_No")
+        case_year = request.data.get("Case_Year")
+        if not all([case_mode, case_type, case_no, case_year]):
             return Response(
-                {"status": "error", "message": "mobile_no and reg no is required"},
+                {"status": "error", "message": "all fields are required"},
                 status=400
             )
         max_retries = 3
@@ -20,13 +23,25 @@ def highCourt_API(request):
 
             scraper = GujratHighCourt()
 
-            response = scraper.getCaseDetails(Case_No)
+            response = scraper.getCaseDetails(case_mode, case_type, case_no, case_year)
             applications = response.get("applications", [])
             if applications:   # success → return immediately
                 return Response({
                     "status": "success",
                     "data": applications,
                 }, status=200)
+            
+            if not applications and response.get("message") == "you are enter wrong case code or bench code":
+                return Response({"status": "success",  
+                                 "data": [],
+                                 "message": "you are enter wrong case code or bench code",
+                                 }, status=200)
+            
+            if not applications and response.get("message") == "case details are not available":
+                return Response({"status": "success",  
+                                 "data": [],
+                                 "message": "case details are not available",
+                                 }, status=200)
 
             logger.warning(f"Attempt {attempt+1}: No data received, retrying...")
             

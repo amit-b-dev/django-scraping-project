@@ -37,7 +37,7 @@ class Extractor:
             case_type = opt.get_text(strip=True)
             if case_type:
                 case_types.append({
-                    "code_code":str(new_code),
+                    "case_code":str(new_code),
                     "case_type":case_type
                 })
                 new_code += 1

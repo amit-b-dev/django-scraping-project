@@ -9,11 +9,9 @@ from ..util.captchaDecorder import google_ocr
 class CaptchaSolver:
  
     def __init__(self):
-        self.captcha_dir = "captcha_image"
-        self.captcha_path = os.path.join(self.captcha_dir, "captcha.png")
-        os.makedirs(self.captcha_dir, exist_ok=True)
+        pass
  
-    def solve(self,captcha_res, max_retries=10):
+    def solve(self,captcha_res):
         print("Enter captcha solver function.....")
 
         try:
@@ -21,7 +19,7 @@ class CaptchaSolver:
             start_time = datetime.now()
             captcha_text = google_ocr(base64_image).strip()
             print("Total Runtime:", (datetime.now() - start_time).total_seconds())
-            return captcha_text,self.captcha_path,self.captcha_dir
+            return captcha_text
  
         except:
             traceback.print_exc()

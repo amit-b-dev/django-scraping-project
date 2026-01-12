@@ -24,20 +24,15 @@ class NavigationFlow:
         captcha_url = "https://hcmadras.tn.gov.in"+soup.find(id='caseno_captcha_img')['src']
         captcha_res = self.session.get(captcha_url, headers=headers,cookies=cookies)
         time.sleep(0.2)
-        captcha_text,captcha_path,captcha_dir = self.solver.solve(captcha_res)
+        captcha_text = self.solver.solve(captcha_res)
 
-        return captcha_text,captcha_path,captcha_dir
+        return captcha_text
     
 
-    def getCaseDetails(self,cookies, case_code, case_no,case_year, captcha_text,captcha_path,captcha_dir):
+    def getCaseDetails(self,cookies, case_code, case_no,case_year, captcha_text):
         headers,payload = HeaderHelper.getCaseDetails_header(case_code, case_no, case_year, captcha_text)
         res = self.session.post("https://hcmadras.tn.gov.in/cause_judment_action_mdu.php", headers=headers,data=payload, cookies=cookies)
         time.sleep(0.2)
-        if "Captcha not matching" not in res.text:
-            if os.path.exists(captcha_path):
-                os.remove(captcha_path)
-            if os.path.isdir(captcha_dir):
-                os.rmdir(captcha_dir)
         return res
     
     def get_Base64_Encoded_Pdf(self,value_id):

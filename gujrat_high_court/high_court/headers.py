@@ -19,7 +19,7 @@ class HeaderHelper:
 
         return headers,params
     
-    def verifyAndGetChallanDetails_header(case_no,captcha_text,ccin,servicecode="1"):
+    def verifyAndGetChallanDetails_header(captcha_text,case_mode, case_type, case_no, case_year,servicecode="1"):
 
         headers = {
             "Accept": "application/json, text/javascript, */*; q=0.01",
@@ -36,7 +36,7 @@ class HeaderHelper:
 
 
         payload = {
-            "ccin": ccin,
+            "ccin": case_mode+"#"+case_type+"#"+case_no+"#"+case_year,
             "servicecode": servicecode,
             "challengeString": captcha_text
         }

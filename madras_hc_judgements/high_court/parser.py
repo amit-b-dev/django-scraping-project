@@ -2,6 +2,7 @@ from bs4 import BeautifulSoup
 from datetime import datetime
 from .navigation import NavigationFlow
 from .headers import HeaderHelper
+from bs4 import BeautifulSoup
 import base64
 
 class Extractor:
@@ -9,23 +10,36 @@ class Extractor:
         self.session = session
         self.flow = NavigationFlow(self.session)
     
-    def get_case_type(self, soup, case_type: str):
-        select = soup.find(id="RegCase_type")
-        if not select:
-            return []
-
-        options = select.find_all("option")
-        case_type_norm = case_type.strip().lower()
-        for opt in options:
-            if opt.get_text(strip=True).lower() == case_type_norm:
-                case_value = opt.get("value")
-                return case_value
-        return None
-    
-    def getCaseTypeCode(self,res, case_type):
+    def getCaseTypeCode(self, res, case_code):
         soup = BeautifulSoup(res.text, "html.parser")
-        case_code = self.get_case_type(soup,case_type)
-        return case_code
+        select = soup.find(id="RegCase_type")
+        options = select.find_all("option")
+        new_code = 1
+        for opt in options[1:]:
+            case_type = opt.get_text(strip=True)
+            if case_type:
+                if str(new_code)==case_code:
+                    case_code = opt.get('value')
+                    return case_code
+                
+                new_code += 1
+        return None
+
+    def caseTypes(self, res):
+        soup = BeautifulSoup(res.text, "html.parser")
+        select = soup.find(id="RegCase_type")
+        options = select.find_all("option")
+        new_code = 1
+        case_types = []
+        for opt in options[1:]:
+            case_type = opt.get_text(strip=True)
+            if case_type:
+                case_types.append({
+                    "code_code":str(new_code),
+                    "case_type":case_type
+                })
+                new_code += 1
+        return case_types
     
     def fetchCaseDetails(self,res):
         try:

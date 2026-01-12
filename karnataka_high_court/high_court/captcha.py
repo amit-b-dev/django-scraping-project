@@ -12,18 +12,6 @@ class CaptchaSolver:
         self.captcha_dir = "captcha_image"
         self.captcha_path = os.path.join(self.captcha_dir, "captcha.png")
         os.makedirs(self.captcha_dir, exist_ok=True)
- 
-    # def convert_image_back_to_white_bg(self):
-    #     img = Image.open(self.captcha_path)
-
-    #     if img.mode == 'RGBA':
-    #         # Create white background
-    #         bg = Image.new("RGB", img.size, (255, 255, 255))
-    #         bg.paste(img, mask=img.split()[3])  # Paste using alpha channel
-    #     else:
-    #         bg = img.convert("RGB")
-
-    #     bg.save(self.captcha_path)
 
     def clean_captcha(self):
         img = cv2.imread(self.captcha_path)

@@ -308,3 +308,80 @@ class Extractor:
                 return result
         except:
             return []
+
+
+
+    def getCaseMode(self,res,case_mode_code):
+        soup = BeautifulSoup(res.text, "html.parser")
+        select = soup.find(id="casefr")
+        options = select.find_all("option")
+        new_code = 1
+        for opt in options:
+            case_mode = opt.get_text(strip=True)
+            if case_mode:
+                if str(new_code)==case_mode_code:
+                    actual_case_mode_code = opt.get('value')
+                    return actual_case_mode_code
+                new_code += 1
+        return None
+
+    def getCaseCode(self, res, case_type_code):
+
+        case_list = []
+        data = json.loads(res.text)
+
+        finaldata = data["finaldata"][0]
+        case_type_array = finaldata["casetypearray"]
+        new_code = 1
+        for group in case_type_array:
+            for category, cases in group.items():
+                for case in cases:
+
+                    if str(new_code)==case_type_code:
+                        print(case["casecode"])
+                        break
+                    new_code += 1
+
+        return case_list
+    
+
+
+
+
+
+
+    def getCaseModeData(self,res):
+        soup = BeautifulSoup(res.text, "html.parser")
+        select = soup.find(id="casefr")
+        options = select.find_all("option")
+        new_code = 1
+        case_modes = []
+        for opt in options:
+            bench_type = opt.get_text(strip=True)
+            if bench_type:
+                case_modes.append({
+                    "code_code":str(new_code),
+                    "bench_type":bench_type
+                })
+                new_code += 1
+        return case_modes
+
+    def getCaseTypeData(self, res):
+
+        case_list = []
+        data = json.loads(res.text)
+
+        finaldata = data["finaldata"][0]
+        case_type_array = finaldata["casetypearray"]
+
+        for group in case_type_array:
+            for category, cases in group.items():
+                for case in cases:
+                    case_list.append({
+                            #"case_code": case["casecode"],
+                            "case_type_code": new_code,
+                            "case_type": '-'.join((case["casetype"],case["description"])),
+                    })
+                    new_code += 1
+        return case_list
+        

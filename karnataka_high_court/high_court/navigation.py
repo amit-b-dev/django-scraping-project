@@ -34,8 +34,8 @@ class NavigationFlow:
 
         return captcha_text,captcha_path,captcha_dir
     
-    def verifyAndGetChallanDetails(self,cookies, bench_code, case_code, case_no,case_year, captcha_text, captcha_path, captcha_dir):
-        headers,payload = HeaderHelper.verifyAndGetChallanDetails_header(bench_code, case_code, case_no, case_year, captcha_text)
+    def verifyAndGetChallanDetails(self,cookies, actual_bench_code, actual_case_code, case_no,case_year, captcha_text, captcha_path, captcha_dir):
+        headers,payload = HeaderHelper.verifyAndGetChallanDetails_header(actual_bench_code, actual_case_code, case_no, case_year, captcha_text)
         res = self.session.post("https://judiciary.karnataka.gov.in/rep_judgment_detailscasebc.php", headers=headers,data=payload, cookies=cookies)
         if res.text!="2":
             if os.path.exists(captcha_path):

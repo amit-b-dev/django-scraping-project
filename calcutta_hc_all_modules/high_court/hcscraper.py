@@ -15,8 +15,8 @@ class HcCulculttaAppellateSide:
                 actual_case_code = self.flow.getCaseTypeCode(court_code,case_code)
                 if not actual_case_code:
                     return {"applications": [], "message": "you are enter wrong case code"}
-                captcha_text,captcha_path,captcha_dir = self.flow.getCaptchText(res,cookies)
-                res = self.flow.varifyCaptchaAndDetails(cookies, court_code, actual_case_code, case_no,case_year, captcha_text,captcha_path,captcha_dir)
+                captcha_text = self.flow.getCaptchText(res,cookies)
+                res = self.flow.varifyCaptchaAndDetails(cookies, court_code, actual_case_code, case_no,case_year, captcha_text)
                 if "Captcha not matching" in res.text:
                     print(f"Attempt {i+1}: captcha incorrect, retrying...")
                     continue

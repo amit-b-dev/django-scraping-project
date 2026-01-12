@@ -28,21 +28,15 @@ class NavigationFlow:
         captcha_url = "https://hcservices.ecourts.gov.in"+soup.find(id='captcha_image')['src']
         captcha_res = self.session.get(captcha_url, headers=headers,cookies=cookies)
         time.sleep(0.2)
-        captcha_text,captcha_path,captcha_dir = self.solver.solve(captcha_res)
+        captcha_text = self.solver.solve(captcha_res)
 
-        return captcha_text,captcha_path,captcha_dir
+        return captcha_text
     
 
-    def varifyCaptchaAndDetails(self,cookies, court_code, case_code, case_no,case_year, captcha_text,captcha_path,captcha_dir):
+    def varifyCaptchaAndDetails(self,cookies, court_code, case_code, case_no,case_year, captcha_text):
         headers,payload = HeaderHelper.getCaseDetails_header(court_code, case_code, case_no, case_year, captcha_text)
         res = self.session.post("https://hcservices.ecourts.gov.in/ecourtindiaHC/cases/case_no_qry.php", headers=headers,data=payload, cookies=cookies)
         time.sleep(0.2)
-        if "error1" not in res.text:
-            if os.path.exists(captcha_path):
-                os.remove(captcha_path)
-            if os.path.isdir(captcha_dir):
-                os.rmdir(captcha_dir)
-
         return res
     
 

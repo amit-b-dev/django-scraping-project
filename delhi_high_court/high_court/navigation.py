@@ -21,3 +21,4 @@ class NavigationFlow:
         res = self.session.post("https://delhihighcourt.nic.in/app/case-number", headers=headers,data=payload, cookies=cookies)
                 
         return res
+    

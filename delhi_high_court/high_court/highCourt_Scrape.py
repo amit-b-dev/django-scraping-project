@@ -30,10 +30,10 @@ def highCourt_API(request):
                     "data": applications,
                 }, status=200)
             
-            if not applications and response.get("message") == "you are enter wrong case code":
+            if not applications and response.get("message") == "you are enter wrong input":
                 return Response({"status": "success",  
                                  "data": [],
-                                 "message": "you are enter wrong case code",
+                                 "message": "you are enter wrong input",
                                  }, status=200)
             
             if not applications and response.get("message") == "case details are not available":

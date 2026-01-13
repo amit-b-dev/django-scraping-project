@@ -28,7 +28,7 @@ class HeaderHelper:
             "Connection": "keep-alive",
             "Host": "bombayhighcourt.nic.in",
             "Priority": "u=0, i",
-            "Referer": "https://bombayhighcourt.nic.in/index.php",
+            # "Referer": "https://bombayhighcourt.nic.in/index.php",
             "Sec-Fetch-Dest": "document",
             "Sec-Fetch-Mode": "navigate",
             "Sec-Fetch-Site": "same-origin",
@@ -59,7 +59,7 @@ class HeaderHelper:
 
         return headers
    
-    def loadCaseDetails_header(Case_No,CSRFName, CSRFToken,captcha_text):
+    def loadCaseDetails_header(payload, CSRFName, CSRFToken, captcha_text):
         headers = {
             "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
             "Accept-Encoding": "gzip, deflate, br, zstd",
@@ -82,11 +82,11 @@ class HeaderHelper:
             "CSRFName": CSRFName,
             "CSRFToken": CSRFToken,
             "pageno": "1",
-            "m_sideflg": "C",
-            "m_sr": "R",
-            "m_skey": "AO",
-            "m_no": Case_No,
-            "m_yr": "2020",
+            "m_sideflg": payload[0],
+            "m_sr": payload[1],
+            "m_skey": payload[2],
+            "m_no": payload[3],
+            "m_yr": payload[4],
             "captchaflg": "",
             "captcha_code": captcha_text,
             "submit1": "Submit"

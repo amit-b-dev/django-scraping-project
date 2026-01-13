@@ -9,7 +9,7 @@ from datetime import datetime
 def highCourt_API(request):
     try:
         case_mode = request.data.get("Case_Mode")
-        case_type = request.data.get("case_type")
+        case_type = request.data.get("Case_Type")
         case_no = request.data.get("Case_No")
         case_year = request.data.get("Case_Year")
         if not all([case_mode, case_type, case_no, case_year]):
@@ -31,10 +31,10 @@ def highCourt_API(request):
                     "data": applications,
                 }, status=200)
             
-            if not applications and response.get("message") == "you are enter wrong case code or bench code":
+            if not applications and response.get("message") == "you are enter wrong input":
                 return Response({"status": "success",  
                                  "data": [],
-                                 "message": "you are enter wrong case code or bench code",
+                                 "message": "you are enter wrong input",
                                  }, status=200)
             
             if not applications and response.get("message") == "case details are not available":
@@ -42,6 +42,64 @@ def highCourt_API(request):
                                  "data": [],
                                  "message": "case details are not available",
                                  }, status=200)
+
+            logger.warning(f"Attempt {attempt+1}: No data received, retrying...")
+            
+            if attempt < max_retries - 1:
+                time.sleep(retry_delay)
+
+        # After all retries
+        return Response({"status": "success", "data": [], "message": "No Record found."})
+
+    except Exception as e:
+        logger.error(f"Error in vahan_get_result: {str(e)}", exc_info=True)
+        return Response({"status": "error", "message": "Internal server error"}, status=500)
+
+@api_view(['GET'])
+def caseTypeList_API(request):
+    try:
+        max_retries = 3
+        retry_delay = 1
+        for attempt in range(max_retries):
+
+            scraper = GujratHighCourt()
+
+            response = scraper.getCasetypesList()
+            applications = response.get("applications", [])
+            if applications:   # success → return immediately
+                return Response({
+                    "status": "success",
+                    "data": applications,
+                }, status=200)
+
+            logger.warning(f"Attempt {attempt+1}: No data received, retrying...")
+            
+            if attempt < max_retries - 1:
+                time.sleep(retry_delay)
+
+        # After all retries
+        return Response({"status": "success", "data": [], "message": "No Record found."})
+
+    except Exception as e:
+        logger.error(f"Error in vahan_get_result: {str(e)}", exc_info=True)
+        return Response({"status": "error", "message": "Internal server error"}, status=500)
+
+@api_view(['GET'])
+def caseModeList_API(request):
+    try:
+        max_retries = 3
+        retry_delay = 1
+        for attempt in range(max_retries):
+
+            scraper = GujratHighCourt()
+
+            response = scraper.getCaseModeList()
+            applications = response.get("applications", [])
+            if applications:   # success → return immediately
+                return Response({
+                    "status": "success",
+                    "data": applications,
+                }, status=200)
 
             logger.warning(f"Attempt {attempt+1}: No data received, retrying...")
             

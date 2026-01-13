@@ -13,7 +13,7 @@ class HcDelhi:
             res, cookies = self.flow.loadHomePage()
             actual_case_code = self.extract.get_case_code(res, case_code)
             if not actual_case_code:
-                return {"applications": [], "message": "you are enter wrong case code"}
+                return {"applications": [], "message": "you are enter wrong input"}
             captcha_text, _token = self.extract.GetCaptchText(res)
 
             res = self.flow.verifyAndGetChallanDetails(cookies, actual_case_code, case_no,case_year, captcha_text,_token)

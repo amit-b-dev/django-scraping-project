@@ -27,15 +27,22 @@ class CaptchaSolver:
 
     def clean_captcha(self):
         img = cv2.imread(self.captcha_path)
-        hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
- 
-        mask = cv2.inRange(hsv, np.array([20, 80, 80]), np.array([35, 255, 255]))
- 
-        if cv2.countNonZero(mask) > 60:
-            cleaned = cv2.inpaint(img, mask, 3, cv2.INPAINT_NS)
-            cv2.imwrite(self.captcha_path, cleaned)
-        else:
-            cv2.imwrite(self.captcha_path, img)
+
+        # 1. Convert to grayscale
+        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+        # 2. Threshold dark pixels (black line)
+        _, thresh = cv2.threshold(gray, 60, 255, cv2.THRESH_BINARY_INV)
+
+        # 3. Detect thin lines using morphology
+        kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (25, 1))
+        line_mask = cv2.morphologyEx(thresh, cv2.MORPH_OPEN, kernel)
+
+        # 4. Inpaint the detected line
+        cleaned = cv2.inpaint(img, line_mask, 3, cv2.INPAINT_NS)
+
+        cv2.imwrite(self.captcha_path, cleaned)
+
  
     def solve(self,captcha_res, max_retries=10):
         print("Enter captcha solver function.....")

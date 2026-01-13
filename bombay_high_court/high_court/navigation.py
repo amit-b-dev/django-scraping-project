@@ -33,7 +33,7 @@ class NavigationFlow:
         soup = BeautifulSoup(res.text,'html.parser')
         CSRFName = soup.find("input",{"name":'CSRFName'})['value']
         CSRFToken = soup.find("input",{"name":'CSRFToken'})['value']
-        return CSRFName,CSRFToken
+        return CSRFName,CSRFToken,res
     
     def getCaptchaText(self):
         headers = HeaderHelper.getCaptchaText_header()
@@ -44,8 +44,8 @@ class NavigationFlow:
 
         return captcha_text
     
-    def loadCaseDetails(self, Case_No, CSRFName, CSRFToken,captcha_text):
-        headers,payload = HeaderHelper.loadCaseDetails_header(Case_No,CSRFName, CSRFToken,captcha_text)
+    def loadCaseDetails(self, payload, CSRFName, CSRFToken,captcha_text):
+        headers,payload = HeaderHelper.loadCaseDetails_header(payload, CSRFName, CSRFToken,captcha_text)
         url = "https://bombayhighcourt.nic.in/ordqrywebcase_action.php"
         res = self.session.post(url,data=payload,headers=headers)
         time.sleep(0.2)

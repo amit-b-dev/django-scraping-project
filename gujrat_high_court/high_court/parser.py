@@ -1,6 +1,6 @@
 from bs4 import BeautifulSoup
 from datetime import datetime
-import re,json
+import re,json,traceback
 
 class Extractor:
     def __init__(self, session):
@@ -159,20 +159,44 @@ class Extractor:
         }
 
     def get_case_meta(self,data):
+        
         md = data.get("maindetails", {})
-        cls = data.get("classification", {})
+        try:presented_on         =   md.get("presentdate")
+        except:presented_on      =   None
 
+        try:registered_on        =   md.get("registrationdate")
+        except:registered_on     =   None
+
+        try:bench_category       =   md.get("benchname")
+        except:bench_category    =   None
+
+        try:district             =   md.get("districtname")
+        except:district          =   None
+
+        try:case_originated_from =   md.get("originname")
+        except:case_originated_from =   None
+
+        try:purpose_of_listing   =   md.get("stagename")
+        except:purpose_of_listing=   None
+
+        try:
+            cls = data.get("classification", {})
+            classification= cls.get("description")
+            Act = None
+        except:
+            if len(cls)==2:
+                classification = cls[1].get("description")
+                Act = cls[0].get("description")
+            
         return {
-            "presented_on": md.get("presentdate"),
-            "registered_on": md.get("registrationdate"),
-
-            "bench_category": md.get("benchname"),
-            "district": md.get("districtname"),
-
-            "case_originated_from": md.get("originname"),
-            "purpose_of_listing": md.get("stagename"),
-
-            "classification": cls.get("description")
+            "presented_on": presented_on,
+            "registered_on": registered_on,
+            "bench_category": bench_category,
+            "district": district,
+            "case_originated_from": case_originated_from,
+            "purpose_of_listing": purpose_of_listing,
+            "classification": classification,
+            "Act": Act
         }
 
     # def get_court_proceedings(self,data):
@@ -307,6 +331,7 @@ class Extractor:
             else:
                 return result
         except:
+            traceback.print_exc()
             return []
 
 
@@ -327,7 +352,6 @@ class Extractor:
 
     def getCaseCode(self, res, case_type_code):
 
-        case_list = []
         data = json.loads(res.text)
 
         finaldata = data["finaldata"][0]
@@ -336,18 +360,12 @@ class Extractor:
         for group in case_type_array:
             for category, cases in group.items():
                 for case in cases:
-
                     if str(new_code)==case_type_code:
-                        print(case["casecode"])
-                        break
+                        return str(case["casecode"])
                     new_code += 1
 
-        return case_list
+        return None
     
-
-
-
-
 
 
     def getCaseModeData(self,res):
@@ -373,12 +391,11 @@ class Extractor:
 
         finaldata = data["finaldata"][0]
         case_type_array = finaldata["casetypearray"]
-
+        new_code = 1
         for group in case_type_array:
             for category, cases in group.items():
                 for case in cases:
                     case_list.append({
-                            #"case_code": case["casecode"],
                             "case_type_code": new_code,
                             "case_type": '-'.join((case["casetype"],case["description"])),
                     })

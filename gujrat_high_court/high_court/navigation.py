@@ -21,7 +21,7 @@ class NavigationFlow:
         
         return res,cookies
 
-    def loadCaseTypeData(self,res):
+    def loadCaseTypeData(self):
         res = self.session.post("https://gujarathc-casestatus.nic.in/gujarathc/GetCaseTypeDataOnLoad")
         return res
     

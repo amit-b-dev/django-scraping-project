@@ -33,5 +33,6 @@ urlpatterns = [
     path('api/', include('madras_hc_judgements.urls')),
     path('api/', include('madras_madurai_bench_judgements.urls')),
     path('api/', include('calcutta_hc_all_modules.urls')),
+    path('api/', include('ksat_cases.urls')),
 
 ]

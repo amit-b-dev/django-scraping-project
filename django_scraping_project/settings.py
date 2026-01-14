@@ -51,7 +51,8 @@ INSTALLED_APPS = [
     'delhi_high_court',
     'madras_hc_judgements',
     'madras_madurai_bench_judgements',
-    'calcutta_hc_all_modules'
+    'calcutta_hc_all_modules',
+    'ksat_cases'
 ]
 
 MIDDLEWARE = [

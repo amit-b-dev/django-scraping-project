@@ -1,73 +1,41 @@
 from bs4 import BeautifulSoup
 from datetime import datetime
-import re,json,traceback
+import re, json, traceback, time, base64
+from .headers import HeaderHelper
 
 class Extractor:
     def __init__(self, session):
         self.session = session
 
     
-    def get_case_header(self,data):
-        md = data.get("maindetails", {})
-
+    def getCaseHeader(self,data):
+        try:md = data.get("maindetails", {})
+        except:md = None
+        try:case_title = f"{md.get('casedesc')} - No. {md.get('casenumber')} of {md.get('caseyear')}"
+        except:case_title = None
+        try:cnr_no = md.get("ccin")
+        except:cnr_no=None
+        try:status = md.get("casestatus")
+        except:status = None
         return {
-            "case_title": f"{md.get('casedesc')} - No. {md.get('casenumber')} of {md.get('caseyear')}",
-            "cnr_no": md.get("ccin"),
-            "status": md.get("casestatus")
+            "case_title": case_title,
+            "cnr_no": cnr_no,
+            "status": status
         }
 
-    def get_disposal_details(self,data):
-        md = data.get("maindetails", {})
-
+    def getDisposalDetails(self,data):
+        try:md = data.get("maindetails", {})
+        except:md = None
+        try:disposal_date = md.get("disposaldate")
+        except:disposal_date = None
+        try:decided_by =  md.get("judges")
+        except:decided_by = None
         return {
-            "disposal_date": md.get("disposaldate"),
-            "decided_by": md.get("judges")
+            "disposal_date": disposal_date,
+            "decided_by": decided_by
         }
 
-    # def get_parties_table(self,data):
-    #     litigant = data.get("litigant", {})
-    #     respondant = data.get("respondant", {})
-    #     advocates = data.get("advocate", [])
-
-    #     petitioners = []
-    #     respondents = []
-
-    #     # Separate advocates by type
-    #     petitioner_advs = []
-    #     respondent_advs = []
-
-    #     for adv in advocates:
-    #         if adv.get("litiganttypecode") == "1":
-    #             petitioner_advs.append(
-    #                 f"{adv.get('advocatename')} for: {adv.get('litiganttype')} {adv.get('namelist')}"
-    #             )
-    #         elif adv.get("litiganttypecode") == "2":
-    #             respondent_advs.append(
-    #                 f"{adv.get('advocatename')} for :{adv.get('litiganttype')} {adv.get('namelist')}"
-    #             )
-
-    #     # Petitioner row
-    #     if litigant:
-    #         petitioners.append({
-    #             "sno": litigant.get("srno"),
-    #             "name": litigant.get("litigantname"),
-    #             "advocate_on_record": petitioner_advs
-    #         })
-
-    #     # Respondent row
-    #     if respondant:
-    #         respondents.append({
-    #             "sno": respondant.get("srno"),
-    #             "name": respondant.get("respondantname"),
-    #             "advocate_on_record": respondent_advs
-    #         })
-
-    #     return {
-    #         "petitioners": petitioners,
-    #         "respondents": respondents
-    #     }
-
-    def normalize_to_list(self,value):
+    def normalize_to_list_helper(self,value):
         if not value:
             return []
         if isinstance(value, list):
@@ -76,50 +44,10 @@ class Extractor:
             return [value]
         return []   # anything else (str, int, etc.)
 
-    # def get_parties_table(self,data):
-    #     litigants = self.normalize_to_list(data.get("litigant"))
-    #     respondents_raw = self.normalize_to_list(data.get("respondant"))
-    #     advocates = self.normalize_to_list(data.get("advocate"))
-    #     # advocates = data.get("advocate", [])
-
-    #     petitioners = []
-    #     respondents = []
-
-    #     # Group advocates by litiganttypecode
-    #     adv_map = {"1": [], "2": []}
-
-    #     for adv in advocates:
-    #         code = adv.get("litiganttypecode")
-    #         if code in adv_map:
-    #             adv_map[code].append(
-    #                 f"{adv.get('advocatename')} for: {adv.get('litiganttype')} {adv.get('namelist')}"
-    #             )
-
-    #     # Petitioners
-    #     for l in litigants:
-    #         petitioners.append({
-    #             "sno": l.get("srno"),
-    #             "name": l.get("litigantname"),
-    #             "advocate_on_record": adv_map["1"]
-    #         })
-
-    #     # Respondents
-    #     for r in respondents_raw:
-    #         respondents.append({
-    #             "sno": r.get("srno"),
-    #             "name": r.get("respondantname"),
-    #             "advocate_on_record": adv_map["2"]
-    #         })
-
-    #     return {
-    #         "petitioners": petitioners,
-    #         "respondents": respondents
-    #     }
-
-    def get_parties_table(self,data):
-        litigants = self.normalize_to_list(data.get("litigant"))
-        respondents_raw = self.normalize_to_list(data.get("respondant"))
-        advocates = self.normalize_to_list(data.get("advocate"))
+    def getPartiesTable(self,data):
+        litigants = self.normalize_to_list_helper(data.get("litigant"))
+        respondents_raw = self.normalize_to_list_helper(data.get("respondant"))
+        advocates = self.normalize_to_list_helper(data.get("advocate"))
 
         petitioners = []
         respondents = []
@@ -158,9 +86,10 @@ class Extractor:
             "respondents": respondents
         }
 
-    def get_case_meta(self,data):
+    def getCaseMeta(self,data):
         
-        md = data.get("maindetails", {})
+        try:md = data.get("maindetails", {})
+        except:md = None
         try:presented_on         =   md.get("presentdate")
         except:presented_on      =   None
 
@@ -199,28 +128,10 @@ class Extractor:
             "Act": Act
         }
 
-    # def get_court_proceedings(self,data):
-    #     proceedings = []
-
-    #     rows = data.get("linkedmatterscp", [])
-
-    #     for idx, row in enumerate(rows, start=1):
-    #         proceedings.append({
-    #             "sno": idx,
-    #             "notified_date": row.get("PROCEEDINGDATElmcp", "").strip(),
-    #             "court_code": row.get("COURTCODElmcp", "").strip(),
-    #             "board_sr_no": row.get("BOARDSRNOlmcp", "").strip(),
-    #             "stage": row.get("STAGENAMElmcp", "").strip(),
-    #             "action": row.get("ACTIONNAMElmcp", "").strip(),
-    #             "coram": row.get("JUDGESlmcp", "").strip()
-    #         })
-
-    #     return proceedings
-
-    def get_court_proceedings(self,data):
+    def getCourtProceedings(self,data):
         proceedings = []
 
-        rows = self.normalize_to_list(data.get("linkedmatterscp"))
+        rows = self.normalize_to_list_helper(data.get("linkedmatterscp"))
 
         for idx, row in enumerate(rows, start=1):
             if not isinstance(row, dict):
@@ -237,55 +148,6 @@ class Extractor:
             })
 
         return proceedings
-
-    def get_optional_section(self,data, key, no_data_text):
-        value = data.get(key)
-        if not value or value == {}:
-            return no_data_text
-        return value
-
-    def get_other_sections(self,data):
-        return {
-
-            "office_objections": self.get_optional_section(
-                data,"officeobjection", "NO DATA FOR AVAILABLE ORDERS"),
-
-            "available_orders": self.get_optional_section(
-                data, "availableorders", "NO DATA FOR AVAILABLE ORDERS"
-            ),
-
-            "connected_matters": self.get_optional_section(
-                data, "connectedmatters", "NO DATA FOR CONNECTED MATTERS"
-            ),
-
-            "application_appeal_matters": self.get_optional_section(
-                data, "applicationappeal", "NO DATA FOR APPLICATION / APPEAL MATTERS"
-            ),
-
-            "ia_details": self.get_optional_section(
-                data, "iadetails", "NO DATA FOR IA DETAILS"
-            ),
-
-            "office_details": self.get_optional_section(
-                data, "officedetails", "NO DATA FOR OFFICE DETAILS"
-            ),
-
-            "certified_copy": self.get_optional_section(
-                data, "certifiedcopy", "NO DATA FOR CERTIFIED COPY"
-            ),
-
-            "lower_court_detail": self.get_optional_section(
-                data, "lowercourtdetail", "NO DATA FOR LOWERCOURT DETAIL"
-            ),
-
-            "fir_details": self.get_optional_section(
-                data, "firdetails", "NO DATA FOR FIR DETAILS"
-            ),
-
-            "translated_orders_judgments": self.get_optional_section(
-                data, "translatedorders", "NO DATA FOR TRANSLATION DETAILS"
-            )
-        }
 
     def convertResRedableform(self,text):
     
@@ -312,6 +174,91 @@ class Extractor:
         except:
             result=[]
 
+    def downloadOrderPdf(self,ccin_no,order_no,order_date,casedetail):
+        headers, payload = HeaderHelper.downloadOrderPdf_header(ccin_no,order_no,order_date,casedetail)
+        res = self.session.post("https://gujarathc-casestatus.nic.in/gujarathc/OrderHistoryViewDownload", headers=headers, data=payload)
+        time.sleep(0.2)
+        base64_pdf = base64.b64encode(res.content).decode()
+        return base64_pdf
+
+    def availableOrders(self,data):
+        available_orders = []
+        try:rows = data.get("orderhistory",[])
+        except:rows = None
+        if rows:
+            if isinstance(rows, dict):
+                rows = [rows]
+            for i in range(len(rows)):
+                s_no = str(i+1)
+                available_orders.append({
+                    "S.No.":s_no,
+                    "case_details" : rows[i]['descriptionoh'],
+                    "judge_name" : rows[i]['judgesoh'],
+                    "order_date" : rows[i]['dsdate'],
+                    "cav" : rows[i]['cavjudgement'],
+                    "judgement" : None,
+                    "questions" : rows[i]['questions'],
+                    "transferred" : rows[i]['transferred'],
+                    "download_pdf" : self.downloadOrderPdf(rows[i]['ccinoh'],s_no,rows[i]['dsdate'],rows[i]['descriptionoh']),
+
+                })
+
+        return available_orders
+
+    def iaDetails(self,data):
+        ia_details = []
+        try:rows = data.get("applicationmatters",[])
+        except:rows = None
+        if rows:
+            if isinstance(rows, dict):
+                rows = [rows]
+            for i in range(len(rows)):
+                s_no = str(i+1)
+                ia_details.append({
+                    "S.No.":s_no,
+                    "case_details" : rows[i]['descriptionlm'],
+                    "status_name" : rows[i]['statusnamelm'],
+                    "disposal_date" : rows[i]['disposaldatelm'],
+                })
+        return ia_details
+    
+    def officeDetails(self,data):
+        office_details = []
+        try:rows = data.get("officedetails",[])
+        except:rows = None
+        if rows:
+            if isinstance(rows, dict):
+                rows = [rows]
+            for i in range(len(rows)):
+                s_no = str(i+1)
+                office_details.append({
+                    "s.no.":s_no,
+                    "filing_date" : rows[i]['FILINGDATE'],
+                    "document_name" : rows[i]['DOCUMENTNAME'],
+                    "advocate_name" : rows[i]['ADVOCATEDISPLAYNAME'],
+                    "court_fee_on_document" : rows[i]['documentfee'],
+                    "document_details" : rows[i]['documentdetails'],
+                })
+        return office_details
+    
+    def lowerCourtDetails(self,data):
+        lower_court_details = []
+        try:rows = data.get("lowercourt",[])
+        except:rows = None
+        if rows:
+            if isinstance(rows, dict):
+                rows = [rows]
+            for i in range(len(rows)):
+                s_no = str(i+1)
+                lower_court_details.append({
+                        "S.No.":s_no,
+                        "lower_court_case_detai" : rows[i]['lccasedescription'],
+                        "lower_court_name" : rows[i]['lowercourtname'],
+                        "judge_name" : rows[i]['lcjudgename'],
+                        "judgment_date" : rows[i]['LCJUDGEMENTDATE'],
+                    })
+        return lower_court_details
+
     def fetchChallanDetails(self,res):
         try:
             if "Details not Found" in res.text:
@@ -320,16 +267,23 @@ class Extractor:
             if result:
                 final_response = {
                     
-                    "case_header"       : self.get_case_header(result),
-                    "disposal_details"  : self.get_disposal_details(result),
-                    "parties"           : self.get_parties_table(result),
-                    "case_meta"         : self.get_case_meta(result),
-                    "court_proceedings" : self.get_court_proceedings(result),
-                    "other_sections"    : self.get_other_sections(result)
+                    "case_header"               : self.getCaseHeader(result),
+                    "disposal_details"          : self.getDisposalDetails(result),
+                    "parties"                   : self.getPartiesTable(result),
+                    "case_meta"                 : self.getCaseMeta(result),
+                    "court_proceedings"         : self.getCourtProceedings(result),
+                    "available_orders"          : self.availableOrders(result),
+                    "ia_details"                : self.iaDetails(result),
+                    "office_details"            : self.officeDetails(result),
+                    "lower_court_details"       : self.lowerCourtDetails(result),
+                    "office_objections"         : [],
+                    "connected_matters"         : [],
+                    "application_appeal_matters": [],
+                    "certified_copy"            : []
                 }
                 return final_response
             else:
-                return result
+                return []
         except:
             traceback.print_exc()
             return []

@@ -42,3 +42,27 @@ class HeaderHelper:
         }
 
         return headers,payload
+    
+    def downloadOrderPdf_header(ccin_no,order_no,order_date,casedetail):
+        headers = {
+            "Accept": "application/pdf,application/octet-stream;q=0.9,*/*;q=0.8",
+            "Accept-Encoding": "gzip, deflate, br, zstd",
+            "Accept-Language": "en-US,en;q=0.5",
+            "Connection": "keep-alive",
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Host": "gujarathc-casestatus.nic.in",
+            "Origin": "https://gujarathc-casestatus.nic.in",
+            "Referer": "https://gujarathc-casestatus.nic.in/gujarathc/",
+            "Upgrade-Insecure-Requests": "1",
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:146.0) Gecko/20100101 Firefox/146.0"
+        }
+        payload = {
+            "ccin_no": ccin_no,
+            "order_no": order_no,
+            "order_date": order_date,
+            "flag": "d",
+            "casedetail": casedetail,
+            "nc": "-"
+        }
+
+        return headers, payload
